@@ -1,0 +1,166 @@
+// This is your Prisma schema file
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// ─── Auth Models ───────────────────────────────────────────────────────────
+
+model User {
+  id            String    @id @default(uuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  password      String?   // hashed, nullable for OAuth
+  role          String    @default("user")  // "user" | "admin"
+  isBlocked     Boolean   @default(false)
+  waTemplate    String?   // custom WA message template, null = use default
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  accounts   Account[]
+  sessions   Session[]
+  weddings   Wedding[]
+}
+
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model Session {
+  id           String   @id @default(uuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model VerificationToken {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model EmailOtp {
+  id        String   @id @default(uuid())
+  email     String
+  otp       String
+  expiresAt DateTime
+  used      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
+// ─── Wedding Models ─────────────────────────────────────────────────────────
+
+model Wedding {
+  id              String    @id @default(uuid())
+  slug            String    @unique
+  userId          String?   // optional: link to owner
+
+  brideName       String
+  brideShort      String
+  brideImage      String
+  brideParents    String
+  groomName       String
+  groomShort      String
+  groomImage      String
+  groomParents    String
+  date            DateTime
+
+  akadTime        String
+  akadLocation    String
+  akadAddress     String
+  akadMapUrl      String
+
+  resepsiTime     String
+  resepsiLocation String
+  resepsiAddress  String
+  resepsiMapUrl   String
+
+  gallery         String[]
+  qris            String
+  themeId         String   @default("javanese")
+  isPublished     Boolean  @default(true)
+
+  user         User?          @relation(fields: [userId], references: [id])
+  timeline     TimelineItem[]
+  bankAccounts BankAccount[]
+  greetings    Greeting[]
+  guests       Guest[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model TimelineItem {
+  id          String  @id @default(uuid())
+  year        String
+  title       String
+  description String
+  weddingId   String
+  wedding     Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model BankAccount {
+  id        String  @id @default(uuid())
+  bank      String
+  number    String
+  holder    String
+  weddingId String
+  wedding   Wedding @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model Greeting {
+  id        String   @id @default(uuid())
+  name      String
+  status    String
+  message   String
+  createdAt DateTime @default(now())
+  weddingId String
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+model Guest {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String
+  note      String?
+  sent      Boolean  @default(false)
+  sentAt    DateTime?
+  createdAt DateTime @default(now())
+  weddingId String
+  wedding   Wedding  @relation(fields: [weddingId], references: [id], onDelete: Cascade)
+}
+
+// ─── App Settings ────────────────────────────────────────────────────────────
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
