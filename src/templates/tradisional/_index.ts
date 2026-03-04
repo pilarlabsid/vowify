@@ -20,7 +20,7 @@ export const TRADISIONAL_TEMPLATES: TemplateConfig[] = [
         status: 'active',
         tier: 'free',
         tags: ['jawa', 'batik', 'gamelan', 'traditional'],
-        loader: () => import('@/templates/javanese'),
+        loader: () => import('@/templates/tradisional/javanese'),
         photoSlots: [
             SLOT_BRIDE_PORTRAIT,
             SLOT_GROOM_PORTRAIT,

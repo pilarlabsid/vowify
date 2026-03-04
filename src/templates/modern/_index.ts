@@ -25,7 +25,7 @@ export const MODERN_TEMPLATES: TemplateConfig[] = [
         status: 'active',
         tier: 'free',
         tags: ['minimal', 'clean', 'modern', 'tipografi'],
-        loader: () => import('@/templates/minimalist'),
+        loader: () => import('@/templates/modern/minimalist'),
         photoSlots: [
             SLOT_HERO_LANDSCAPE,
             SLOT_BRIDE_PORTRAIT,
@@ -43,7 +43,7 @@ export const MODERN_TEMPLATES: TemplateConfig[] = [
         status: 'active',
         tier: 'premium',
         tags: ['mewah', 'gelap', 'emas', 'premium'],
-        loader: () => import('@/templates/elegant'),
+        loader: () => import('@/templates/modern/elegant'),
         photoSlots: [
             SLOT_HERO_FULLSCREEN,
             SLOT_BRIDE_PORTRAIT,

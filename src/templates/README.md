@@ -14,34 +14,28 @@ src/templates/
 ├── registry.ts              ← Agregator — mengumpulkan semua kategori
 ├── README.md                ← Panduan ini
 │
-├── tradisional/
-│   └── _index.ts            ← ✏️  Daftar template tema tradisional ← EDIT DI SINI
+├── tradisional/             ← Kategori tema budaya nusantara
+│   ├── _index.ts            ← ✏️  Daftar template tradisional ← EDIT DI SINI
+│   └── javanese/            ← Komponen template Javanese
+│       ├── index.tsx
+│       ├── styles.css
+│       └── components/
 │
-├── modern/
-│   └── _index.ts            ← ✏️  Daftar template tema modern ← EDIT DI SINI
+├── modern/                  ← Kategori tema modern & kontemporer
+│   ├── _index.ts            ← ✏️  Daftar template modern ← EDIT DI SINI
+│   ├── minimalist/          ← Komponen template Minimalist
+│   │   ├── index.tsx
+│   │   └── styles.css
+│   └── elegant/             ← Komponen template Elegant Night
+│       ├── index.tsx
+│       └── styles.css
 │
-├── [kategori-baru]/
-│   └── _index.ts            ← ✏️  Buat kategori baru kapanpun diperlukan
-│
-├── javanese/                ← Komponen template Javanese
-│   ├── index.tsx
-│   ├── styles.css
-│   └── components/
-├── minimalist/              ← Komponen template Minimalist
-│   ├── index.tsx
-│   └── styles.css
-├── elegant/                 ← Komponen template Elegant Night
-│   ├── index.tsx
-│   └── styles.css
-└── [nama-template]/         ← Komponen template baru
-    ├── index.tsx
-    └── styles.css
+└── [kategori-baru]/         ← Buat folder kategori baru kapanpun
+    ├── _index.ts            ← ✏️  Daftar template kategori ini
+    └── [nama-template]/
+        ├── index.tsx
+        └── styles.css
 ```
-
-> **Catatan struktur:** Folder kategori (`tradisional/`, `modern/`, dll) hanya berisi `_index.ts`
-> — file pendaftar template. Komponen template itu sendiri tetap berada di level
-> `src/templates/[nama-template]/` langsung, bukan di dalam folder kategori.
-> Ini agar path import komponen tetap pendek dan konsisten.
 
 ---
 
@@ -49,10 +43,10 @@ src/templates/
 
 ### Langkah 1 — Buat Folder Template
 
-Buat folder template **di level root `src/templates/`** (bukan di dalam folder kategori):
+Buat folder template di **dalam folder kategori**:
 
 ```
-src/templates/[nama-template]/
+src/templates/[kategori]/[nama-template]/
 ├── index.tsx          ← entry point (wajib)
 ├── styles.css         ← CSS khusus template ini (wajib)
 └── components/        ← sub-komponen (opsional)
@@ -93,8 +87,8 @@ export default function NamaTemplate({ data, guestName }: TemplateProps) {
 Buka `src/templates/[kategori]/_index.ts` yang sesuai lalu tambahkan entry:
 
 ```ts
-// loader path menggunakan nama folder template, BUKAN path kategori
-loader: () => import('@/templates/sundanese'),  // bukan '@/templates/tradisional/sundanese'
+// loader path menyertakan nama kategori
+loader: () => import('@/templates/tradisional/sundanese'),
 ```
 
 Contoh lengkap:
