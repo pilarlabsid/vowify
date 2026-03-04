@@ -163,12 +163,12 @@ vowify/
     │   ├── _slots.ts          # Canonical photo slots (dishare lintas template)
     │   ├── registry.ts        # Agregator — kumpulkan semua kategori
     │   ├── tradisional/
-    │   │   ├── _index.ts      # ✏️ Daftar template tradisional
-    │   │   └── javanese/      # Template Javanese
+    │   │   └── _index.ts      # ✏️ Daftar template tradisional ← edit di sini
     │   ├── modern/
-    │   │   ├── _index.ts      # ✏️ Daftar template modern
-    │   │   ├── minimalist/    # Template Minimalist
-    │   │   └── elegant/       # Template Elegant Night
+    │   │   └── _index.ts      # ✏️ Daftar template modern ← edit di sini
+    │   ├── javanese/          # Komponen template Javanese
+    │   ├── minimalist/        # Komponen template Minimalist
+    │   ├── elegant/           # Komponen template Elegant Night
     │   └── README.md          # Panduan lengkap tambah template
     │
     └── services/
