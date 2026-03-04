@@ -1,6 +1,9 @@
 import { getWeddingBySlug } from "@/services/wedding";
-import { resolveTemplate } from "@/lib/templates";
+import { resolveTemplate } from "@/templates/registry";
 import { notFound } from "next/navigation";
+
+/** Default template sebagai fallback jika themeId di DB tidak valid */
+const DEFAULT_TEMPLATE_ID = 'javanese';
 
 export default async function WeddingPage(props: {
     params: Promise<{ slug: string }>;
@@ -10,21 +13,21 @@ export default async function WeddingPage(props: {
     const searchParams = await props.searchParams;
     const data = await getWeddingBySlug(params.slug);
 
-    if (!data) {
-        notFound();
-    }
+    if (!data) notFound();
 
-    // Support theme override for live preview (e.g. ?theme=elegant)
-    const activeThemeId = searchParams.theme || data.themeId;
-    const Template = resolveTemplate(activeThemeId);
+    // Support theme override untuk live preview (e.g. ?theme=elegant)
+    const requestedThemeId = searchParams.theme || data.themeId;
 
+    // Graceful fallback: jika themeId tidak valid (template dihapus/renamed),
+    // gunakan default template agar undangan tetap bisa dibuka tamu.
+    let Template = await resolveTemplate(requestedThemeId);
     if (!Template) {
-        return (
-            <div className="flex items-center justify-center min-h-screen">
-                <p>Template &quot;{activeThemeId}&quot; tidak ditemukan.</p>
-            </div>
-        );
+        console.warn(`[WeddingPage] Template "${requestedThemeId}" tidak ditemukan untuk slug "${params.slug}". Fallback ke "${DEFAULT_TEMPLATE_ID}".`);
+        Template = await resolveTemplate(DEFAULT_TEMPLATE_ID);
     }
+
+    // Ini seharusnya tidak pernah terjadi (default template selalu ada)
+    if (!Template) notFound();
 
     return <Template data={data} guestName={searchParams.to} />;
 }

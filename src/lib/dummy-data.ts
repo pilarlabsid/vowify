@@ -29,6 +29,7 @@ export const DUMMY_WEDDING_DATA: WeddingData = {
         "/images/gallery_2.png",
         "/images/gallery_3.png",
     ],
+    photos: {},
     timeline: [
         {
             year: "2020",

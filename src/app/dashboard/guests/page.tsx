@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect, useCallback } from 'react';
+import { createPortal } from 'react-dom';
 import {
     Loader2, UserPlus, Send, Trash2, Check, X,
     MessageCircle, Users, Phone, ChevronDown,
@@ -77,9 +78,10 @@ function MessageTemplateEditor({
     };
 
     return (
-        <div className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-sm space-y-4">
+        <div className="rounded-3xl p-6 border shadow-sm space-y-4"
+            style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}>
             <div className="flex items-center justify-between">
-                <h3 className="font-bold text-neutral-800 flex items-center gap-2">
+                <h3 className="font-bold flex items-center gap-2" style={{ color: 'var(--ui-text-primary)' }}>
                     <Edit2 className="w-5 h-5 text-gold" />
                     Template Pesan WhatsApp
                 </h3>
@@ -87,8 +89,10 @@ function MessageTemplateEditor({
                     <button
                         type="button"
                         onClick={() => setShowPreview(v => !v)}
-                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border ${showPreview ? 'bg-gold/10 border-gold/30 text-primary' : 'border-neutral-200 text-neutral-500 hover:border-gold/30'
-                            }`}
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold transition-all border"
+                        style={showPreview
+                            ? { background: 'color-mix(in srgb, #C6A75E 12%, transparent)', borderColor: 'color-mix(in srgb, #C6A75E 30%, transparent)', color: 'var(--ui-text-primary)' }
+                            : { borderColor: 'var(--ui-border)', color: 'var(--ui-text-muted)' }}
                     >
                         <Eye className="w-3.5 h-3.5" />
                         Preview
@@ -97,7 +101,8 @@ function MessageTemplateEditor({
                         type="button"
                         onClick={handleReset}
                         title="Reset ke template default"
-                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border border-neutral-200 text-neutral-500 hover:border-red-300 hover:text-red-500 transition-all"
+                        className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition-all hover:text-red-500"
+                        style={{ borderColor: 'var(--ui-border)', color: 'var(--ui-text-muted)' }}
                     >
                         <RotateCcw className="w-3.5 h-3.5" />
                         Reset
@@ -107,8 +112,8 @@ function MessageTemplateEditor({
                         onClick={handleSave}
                         disabled={saving}
                         className={`flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold transition-all ${savedOk
-                                ? 'bg-emerald-500 text-white border border-emerald-500'
-                                : 'bg-gold text-primary hover:bg-amber-400 border border-gold/50'
+                            ? 'bg-emerald-500 text-white border border-emerald-500'
+                            : 'bg-gold text-primary hover:bg-amber-400 border border-gold/50'
                             } disabled:opacity-60`}
                     >
                         {saving ? (
@@ -123,7 +128,7 @@ function MessageTemplateEditor({
 
             {/* Variable chips */}
             <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs text-neutral-400 font-medium">Variabel:</span>
+                <span className="text-xs font-medium" style={{ color: 'var(--ui-text-muted)' }}>Variabel:</span>
                 {[['nama', 'Nama tamu'], ['mempelai', 'Nama mempelai'], ['link', 'Link undangan']].map(([v, label]) => (
                     <button
                         key={v}
@@ -135,21 +140,27 @@ function MessageTemplateEditor({
                         {`{${v}}`}
                     </button>
                 ))}
-                <span className="text-neutral-300 text-xs ml-1">Klik variabel untuk menyisipkan ke teks</span>
+                <span className="text-xs ml-1" style={{ color: 'var(--ui-text-muted)' }}>Klik variabel untuk menyisipkan ke teks</span>
             </div>
 
             <textarea
                 value={template}
                 onChange={e => setTemplate(e.target.value)}
                 rows={8}
-                className="w-full border border-neutral-200 rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none focus:border-gold/50 bg-neutral-50 focus:bg-white transition-all resize-y leading-relaxed"
+                className="w-full rounded-2xl px-4 py-3 text-sm font-mono focus:outline-none transition-all resize-y leading-relaxed border"
+                style={{
+                    background: 'var(--ui-input-bg)',
+                    borderColor: 'var(--ui-input-border)',
+                    color: 'var(--ui-text-primary)',
+                }}
                 placeholder="Tulis template pesan..."
             />
 
             {showPreview && (
-                <div className="border border-emerald-200 rounded-2xl p-4 bg-emerald-50">
-                    <p className="text-xs font-bold text-emerald-600 mb-2">Preview (contoh untuk tamu "Budi Santoso")</p>
-                    <pre className="text-xs text-neutral-700 whitespace-pre-wrap font-sans leading-relaxed break-all">{preview}</pre>
+                <div className="rounded-2xl p-4 border"
+                    style={{ background: 'color-mix(in srgb, #10B981 8%, transparent)', borderColor: 'color-mix(in srgb, #10B981 25%, transparent)' }}>
+                    <p className="text-xs font-bold mb-2" style={{ color: '#059669' }}>Preview (contoh untuk tamu "Budi Santoso")</p>
+                    <pre className="text-xs whitespace-pre-wrap font-sans leading-relaxed break-all" style={{ color: 'var(--ui-text-secondary)' }}>{preview}</pre>
                 </div>
             )}
         </div>
@@ -205,53 +216,58 @@ function ConfirmDeleteModal({
     onCancel: () => void;
     loading: boolean;
 }) {
-    return (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop */}
-            <div
-                className="absolute inset-0 bg-black/40 backdrop-blur-sm"
-                onClick={onCancel}
-            />
-
-            {/* Modal */}
-            <motion.div
-                initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                transition={{ duration: 0.15 }}
-                className="relative bg-white rounded-3xl shadow-2xl p-7 w-full max-w-sm z-10"
-            >
-                <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
-                        <Trash2 className="w-7 h-7 text-red-500" />
+    // Render via portal → always a direct child of <body>, never inside <tbody>
+    if (typeof document === 'undefined') return null;
+    return createPortal(
+        <AnimatePresence>
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+                <div
+                    className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+                    onClick={onCancel}
+                />
+                <motion.div
+                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
+                    transition={{ duration: 0.15 }}
+                    className="relative rounded-3xl shadow-2xl p-7 w-full max-w-sm z-10 border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}
+                >
+                    <div className="flex flex-col items-center text-center gap-4">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center"
+                            style={{ background: 'color-mix(in srgb, #EF4444 12%, transparent)' }}>
+                            <Trash2 className="w-7 h-7 text-red-500" />
+                        </div>
+                        <div>
+                            <h3 className="font-bold text-lg" style={{ color: 'var(--ui-text-primary)' }}>Hapus Tamu?</h3>
+                            <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'var(--ui-text-secondary)' }}>
+                                Tamu <span className="font-bold text-red-500">{name}</span> akan dihapus
+                                dari daftar undangan secara permanen.
+                            </p>
+                        </div>
+                        <div className="flex gap-3 w-full pt-1">
+                            <button
+                                onClick={onCancel}
+                                disabled={loading}
+                                className="flex-1 px-4 py-3 rounded-2xl border font-bold text-sm transition-all disabled:opacity-50"
+                                style={{ borderColor: 'var(--ui-border)', color: 'var(--ui-text-secondary)', background: 'var(--ui-bg-hover)' }}
+                            >
+                                Batal
+                            </button>
+                            <button
+                                onClick={onConfirm}
+                                disabled={loading}
+                                className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-all disabled:opacity-50"
+                            >
+                                {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
+                                Hapus
+                            </button>
+                        </div>
                     </div>
-                    <div>
-                        <h3 className="font-bold text-neutral-800 text-lg">Hapus Tamu?</h3>
-                        <p className="text-neutral-500 text-sm mt-1.5 leading-relaxed">
-                            Tamu <span className="font-bold text-red-500">{name}</span> akan dihapus
-                            dari daftar undangan secara permanen.
-                        </p>
-                    </div>
-                    <div className="flex gap-3 w-full pt-1">
-                        <button
-                            onClick={onCancel}
-                            disabled={loading}
-                            className="flex-1 px-4 py-3 rounded-2xl border border-neutral-200 text-neutral-600 font-bold text-sm hover:bg-neutral-50 transition-all disabled:opacity-50"
-                        >
-                            Batal
-                        </button>
-                        <button
-                            onClick={onConfirm}
-                            disabled={loading}
-                            className="flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-2xl bg-red-500 text-white font-bold text-sm hover:bg-red-600 transition-all disabled:opacity-50"
-                        >
-                            {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
-                            Hapus
-                        </button>
-                    </div>
-                </div>
-            </motion.div>
-        </div>
+                </motion.div>
+            </div>
+        </AnimatePresence>,
+        document.body
     );
 }
 
@@ -287,34 +303,39 @@ function AddGuestForm({ weddingId, onSuccess }: { weddingId: string; onSuccess: 
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white border border-neutral-200 rounded-3xl p-6 shadow-sm space-y-4">
-            <h3 className="font-bold text-neutral-800 flex items-center gap-2">
+        <form onSubmit={handleSubmit} className="rounded-3xl p-6 border shadow-sm space-y-4"
+            style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}>
+            <h3 className="font-bold flex items-center gap-2" style={{ color: 'var(--ui-text-primary)' }}>
                 <UserPlus className="w-5 h-5 text-gold" />
                 Tambah Tamu Baru
             </h3>
-            {error && <p className="text-red-500 text-sm bg-red-50 p-3 rounded-xl">{error}</p>}
+            {error && (
+                <p className="text-red-500 text-sm p-3 rounded-xl border"
+                    style={{ background: 'color-mix(in srgb, #EF4444 8%, transparent)', borderColor: 'color-mix(in srgb, #EF4444 20%, transparent)' }}>
+                    {error}
+                </p>
+            )}
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-neutral-500 text-xs font-semibold uppercase tracking-wider mb-1.5">Nama Tamu *</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--ui-text-secondary)' }}>Nama Tamu *</label>
                     <input
                         required value={form.name}
                         onChange={e => setForm(f => ({ ...f, name: e.target.value }))}
                         placeholder="Budi Santoso"
-                        className="w-full border border-neutral-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 bg-neutral-50 focus:bg-white transition-all"
+                        className="w-full rounded-2xl px-4 py-3 text-sm focus:outline-none transition-all border"
+                        style={{ background: 'var(--ui-input-bg)', borderColor: 'var(--ui-input-border)', color: 'var(--ui-text-primary)' }}
                     />
                 </div>
                 <div>
-                    <label className="block text-neutral-500 text-xs font-semibold uppercase tracking-wider mb-1.5">Nomor WhatsApp *</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--ui-text-secondary)' }}>Nomor WhatsApp *</label>
                     <div className="flex gap-2">
-                        {/* Country code selector: shows compact "+62" in form, full info in dropdown */}
                         <div className="relative flex-shrink-0">
-                            {/* Visual display — shows only the code */}
-                            <div className="flex items-center gap-1 border border-neutral-200 rounded-2xl px-3 py-3 text-sm bg-neutral-50 font-medium text-neutral-700 pointer-events-none select-none whitespace-nowrap min-w-[70px]">
+                            <div className="flex items-center gap-1 rounded-2xl px-3 py-3 text-sm font-medium pointer-events-none select-none whitespace-nowrap min-w-[70px] border"
+                                style={{ background: 'var(--ui-input-bg)', borderColor: 'var(--ui-input-border)', color: 'var(--ui-text-secondary)' }}>
                                 <span>+{countryCode}</span>
-                                <ChevronDown className="w-3 h-3 text-neutral-400 ml-0.5" />
+                                <ChevronDown className="w-3 h-3 ml-0.5" style={{ color: 'var(--ui-text-muted)' }} />
                             </div>
-                            {/* Native select overlaid — transparent but interactive */}
                             <select
                                 value={countryCode}
                                 onChange={e => setCountryCode(e.target.value)}
@@ -331,17 +352,19 @@ function AddGuestForm({ weddingId, onSuccess }: { weddingId: string; onSuccess: 
                             required value={form.localPhone}
                             onChange={e => setForm(f => ({ ...f, localPhone: e.target.value }))}
                             placeholder="812-3456-7890"
-                            className="flex-1 border border-neutral-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 bg-neutral-50 focus:bg-white transition-all"
+                            className="flex-1 rounded-2xl px-4 py-3 text-sm focus:outline-none transition-all border"
+                            style={{ background: 'var(--ui-input-bg)', borderColor: 'var(--ui-input-border)', color: 'var(--ui-text-primary)' }}
                         />
                     </div>
                 </div>
                 <div className="sm:col-span-2">
-                    <label className="block text-neutral-500 text-xs font-semibold uppercase tracking-wider mb-1.5">Catatan (opsional)</label>
+                    <label className="block text-xs font-semibold uppercase tracking-wider mb-1.5" style={{ color: 'var(--ui-text-secondary)' }}>Catatan (opsional)</label>
                     <input
                         value={form.note}
                         onChange={e => setForm(f => ({ ...f, note: e.target.value }))}
                         placeholder="Keluarga, Teman kuliah, Rekan kerja, dll."
-                        className="w-full border border-neutral-200 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:border-gold/50 bg-neutral-50 focus:bg-white transition-all"
+                        className="w-full rounded-2xl px-4 py-3 text-sm focus:outline-none transition-all border"
+                        style={{ background: 'var(--ui-input-bg)', borderColor: 'var(--ui-input-border)', color: 'var(--ui-text-primary)' }}
                     />
                 </div>
             </div>
@@ -361,7 +384,7 @@ function AddGuestForm({ weddingId, onSuccess }: { weddingId: string; onSuccess: 
 
 
 function GuestRow({
-    guest, slug, brideShort, groomShort, template, onMarkSent, onDelete,
+    guest, slug, brideShort, groomShort, template, onMarkSent, onDelete, onRequestDelete,
 }: {
     guest: Guest;
     slug: string;
@@ -370,6 +393,7 @@ function GuestRow({
     template: string;
     onMarkSent: (id: string) => void;
     onDelete: (id: string) => void;
+    onRequestDelete: (guest: Guest) => void;
 }) {
     const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
     const inviteUrl = `${baseUrl}/${slug}?to=${encodeURIComponent(guest.name)}`;
@@ -385,7 +409,6 @@ function GuestRow({
     };
 
     const [deleting, setDeleting] = useState(false);
-    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleDelete = async () => {
         setDeleting(true);
@@ -393,9 +416,9 @@ function GuestRow({
             await onDelete(guest.id);
         } finally {
             setDeleting(false);
-            setShowConfirm(false);
         }
     };
+    void handleDelete; // unused but kept for API compat
 
     return (
         <>
@@ -404,16 +427,18 @@ function GuestRow({
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, x: -20 }}
-                className="group hover:bg-neutral-50 transition-colors"
+                className="group transition-colors"
+                onMouseEnter={e => (e.currentTarget.style.background = 'var(--ui-bg-hover)')}
+                onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
             >
                 <td className="px-6 py-4">
                     <div>
-                        <p className="font-semibold text-neutral-800">{guest.name}</p>
-                        {guest.note && <p className="text-xs text-neutral-400 mt-0.5">{guest.note}</p>}
+                        <p className="font-semibold" style={{ color: 'var(--ui-text-primary)' }}>{guest.name}</p>
+                        {guest.note && <p className="text-xs mt-0.5" style={{ color: 'var(--ui-text-muted)' }}>{guest.note}</p>}
                     </div>
                 </td>
                 <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 text-neutral-500 text-sm">
+                    <div className="flex items-center gap-2 text-sm" style={{ color: 'var(--ui-text-secondary)' }}>
                         <Phone className="w-3.5 h-3.5 text-gold/60" />
                         <span className="font-mono">+{guest.phone}</span>
                     </div>
@@ -421,17 +446,19 @@ function GuestRow({
                 <td className="px-6 py-4">
                     {guest.sent ? (
                         <div className="flex items-center gap-1.5">
-                            <span className="flex items-center gap-1 px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold">
+                            <span className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold"
+                                style={{ background: 'color-mix(in srgb, #10B981 12%, transparent)', color: '#059669', border: '1px solid color-mix(in srgb, #10B981 25%, transparent)' }}>
                                 <Check className="w-3 h-3" /> Terkirim
                             </span>
                             {guest.sentAt && (
-                                <span className="text-xs text-neutral-400">
+                                <span className="text-xs" style={{ color: 'var(--ui-text-muted)' }}>
                                     {new Date(guest.sentAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short' })}
                                 </span>
                             )}
                         </div>
                     ) : (
-                        <span className="px-2.5 py-1 bg-neutral-100 text-neutral-500 rounded-full text-xs font-bold">
+                        <span className="px-2.5 py-1 rounded-full text-xs font-bold"
+                            style={{ background: 'var(--ui-badge-bg)', color: 'var(--ui-text-muted)' }}>
                             Belum Dikirim
                         </span>
                     )}
@@ -441,19 +468,23 @@ function GuestRow({
                         <button
                             onClick={handleSendWA}
                             className={`flex items-center gap-1.5 px-4 py-2 rounded-full text-xs font-bold transition-all ${guest.sent
-                                ? 'bg-neutral-100 text-neutral-500 hover:bg-emerald-100 hover:text-emerald-700 border border-neutral-200'
+                                ? 'border'
                                 : 'bg-[#25D366] text-white hover:bg-[#1da851] shadow-lg shadow-green-500/20'
                                 }`}
+                            style={guest.sent ? { background: 'var(--ui-bg-hover)', color: 'var(--ui-text-secondary)', borderColor: 'var(--ui-border)' } : {}}
                             title={`Kirim ke ${guest.name} via WhatsApp`}
                         >
                             <MessageCircle className="w-3.5 h-3.5" />
                             {guest.sent ? 'Kirim Ulang' : 'Kirim via WA'}
                         </button>
                         <button
-                            onClick={() => setShowConfirm(true)}
+                            onClick={() => onRequestDelete(guest)}
                             disabled={deleting}
                             title="Hapus tamu"
-                            className="p-2 rounded-lg text-neutral-300 hover:text-red-500 hover:bg-red-50 transition-all disabled:opacity-50"
+                            className="p-2 rounded-lg transition-all disabled:opacity-50 hover:text-red-500"
+                            style={{ color: 'var(--ui-text-muted)' }}
+                            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'color-mix(in srgb, #EF4444 8%, transparent)'; }}
+                            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; }}
                         >
                             {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                         </button>
@@ -461,17 +492,6 @@ function GuestRow({
                 </td>
             </motion.tr>
 
-            {/* Confirm Delete Modal */}
-            <AnimatePresence>
-                {showConfirm && (
-                    <ConfirmDeleteModal
-                        name={guest.name}
-                        loading={deleting}
-                        onConfirm={handleDelete}
-                        onCancel={() => setShowConfirm(false)}
-                    />
-                )}
-            </AnimatePresence>
         </>
     );
 }
@@ -488,6 +508,9 @@ export default function GuestsPage() {
     const [templateLoaded, setTemplateLoaded] = useState(false);
     const [search, setSearch] = useState('');
     const [filter, setFilter] = useState<'all' | 'sent' | 'unsent'>('all');
+    // Modal state — lives here so portal renders outside <table>
+    const [pendingDelete, setPendingDelete] = useState<Guest | null>(null);
+    const [deleting, setDeleting] = useState(false);
 
     // Load saved template from DB on mount
     useEffect(() => {
@@ -532,6 +555,17 @@ export default function GuestsPage() {
         setGuests(prev => prev.filter(g => g.id !== id));
     };
 
+    const handleConfirmDelete = async () => {
+        if (!pendingDelete) return;
+        setDeleting(true);
+        try {
+            await deleteGuest(pendingDelete.id);
+            setPendingDelete(null);
+        } finally {
+            setDeleting(false);
+        }
+    };
+
     const sendAllUnsent = () => {
         const unsent = filtered.filter(g => !g.sent);
         if (unsent.length === 0) return;
@@ -567,6 +601,15 @@ export default function GuestsPage() {
 
     return (
         <div className="space-y-6">
+            {/* Delete Confirm Modal — portal renders into document.body, never inside <tbody> */}
+            {pendingDelete && (
+                <ConfirmDeleteModal
+                    name={pendingDelete.name}
+                    loading={deleting}
+                    onConfirm={handleConfirmDelete}
+                    onCancel={() => setPendingDelete(null)}
+                />
+            )}
             {/* Stats */}
             <div className="grid grid-cols-3 gap-4">
                 <StatCard label="Total Tamu" value={guests.length.toString()} sub="dalam daftar" icon={<Users className="w-5 h-5" />} color="blue" />
@@ -586,10 +629,10 @@ export default function GuestsPage() {
 
                 <button
                     onClick={() => setShowTemplateEditor(v => !v)}
-                    className={`flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold border transition-all ${showTemplateEditor
-                        ? 'bg-gold/10 border-gold/30 text-primary'
-                        : 'border-neutral-200 text-neutral-500 hover:border-gold/30 hover:text-primary'
-                        }`}
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-full text-sm font-bold border transition-all"
+                    style={showTemplateEditor
+                        ? { background: 'color-mix(in srgb, #C6A75E 12%, transparent)', borderColor: 'color-mix(in srgb, #C6A75E 30%, transparent)', color: 'var(--ui-text-primary)' }
+                        : { borderColor: 'var(--ui-border)', color: 'var(--ui-text-secondary)' }}
                 >
                     <Edit2 className="w-4 h-4" />
                     Template Pesan
@@ -607,27 +650,34 @@ export default function GuestsPage() {
 
                 <button
                     onClick={fetchGuests}
-                    className="p-2.5 border border-neutral-200 rounded-full text-neutral-400 hover:text-gold hover:border-gold/30 transition-all"
+                    className="p-2.5 rounded-full transition-all hover:text-gold border"
+                    style={{ borderColor: 'var(--ui-border)', color: 'var(--ui-text-muted)' }}
                 >
                     <RefreshCw className="w-4 h-4" />
                 </button>
 
-                <div className="flex items-center gap-2 bg-white border border-neutral-200 rounded-full px-4 py-2.5 ml-auto">
-                    <Search className="w-4 h-4 text-neutral-400" />
+                <div className="flex items-center gap-2 rounded-full px-4 py-2.5 ml-auto border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}>
+                    <Search className="w-4 h-4" style={{ color: 'var(--ui-text-muted)' }} />
                     <input
                         value={search}
                         onChange={e => setSearch(e.target.value)}
                         placeholder="Cari nama atau nomor..."
                         className="text-sm focus:outline-none bg-transparent w-40"
+                        style={{ color: 'var(--ui-text-primary)' }}
                     />
                 </div>
 
-                <div className="flex bg-neutral-100 rounded-2xl p-1 gap-1">
+                <div className="flex rounded-2xl p-1 gap-1 border"
+                    style={{ background: 'var(--ui-bg-hover)', borderColor: 'var(--ui-border)' }}>
                     {(['all', 'unsent', 'sent'] as const).map(f => (
                         <button
                             key={f}
                             onClick={() => setFilter(f)}
-                            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${filter === f ? 'bg-white shadow text-neutral-800' : 'text-neutral-400 hover:text-neutral-600'}`}
+                            className="px-3 py-1.5 rounded-xl text-xs font-bold transition-all"
+                            style={filter === f
+                                ? { background: 'var(--ui-bg-card)', color: 'var(--ui-text-primary)', boxShadow: 'var(--ui-shadow)' }
+                                : { color: 'var(--ui-text-muted)' }}
                         >
                             {f === 'all' ? 'Semua' : f === 'sent' ? 'Terkirim' : 'Belum'}
                         </button>
@@ -671,25 +721,27 @@ export default function GuestsPage() {
                     desc={guests.length === 0 ? "Tambahkan tamu untuk mengirimkan undangan digital via WhatsApp." : "Coba ubah filter atau kata kunci pencarian."}
                 />
             ) : (
-                <div className="bg-white rounded-3xl border border-neutral-200 overflow-hidden shadow-sm">
-                    <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-                        <p className="text-sm font-semibold text-neutral-500">{filtered.length} tamu ditampilkan</p>
+                <div className="rounded-3xl border overflow-hidden shadow-sm"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}>
+                    <div className="px-6 py-4 border-b flex items-center justify-between"
+                        style={{ borderColor: 'var(--ui-divider)' }}>
+                        <p className="text-sm font-semibold" style={{ color: 'var(--ui-text-secondary)' }}>{filtered.length} tamu ditampilkan</p>
                         <div className="flex items-center gap-2">
                             <span className="w-2.5 h-2.5 rounded-full bg-[#25D366]" />
-                            <span className="text-xs text-neutral-400">Klik tombol hijau untuk kirim via WhatsApp</span>
+                            <span className="text-xs" style={{ color: 'var(--ui-text-muted)' }}>Klik tombol hijau untuk kirim via WhatsApp</span>
                         </div>
                     </div>
                     <div className="overflow-x-auto">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="bg-neutral-50 border-b border-neutral-100">
-                                    <th className="text-left px-6 py-4 text-neutral-500 font-semibold uppercase tracking-wider text-xs">Nama Tamu</th>
-                                    <th className="text-left px-6 py-4 text-neutral-500 font-semibold uppercase tracking-wider text-xs">No. WhatsApp</th>
-                                    <th className="text-left px-6 py-4 text-neutral-500 font-semibold uppercase tracking-wider text-xs">Status</th>
-                                    <th className="text-left px-6 py-4 text-neutral-500 font-semibold uppercase tracking-wider text-xs">Aksi</th>
+                                <tr className="border-b" style={{ background: 'var(--ui-bg-hover)', borderColor: 'var(--ui-divider)' }}>
+                                    <th className="text-left px-6 py-4 font-semibold uppercase tracking-wider text-xs" style={{ color: 'var(--ui-text-secondary)' }}>Nama Tamu</th>
+                                    <th className="text-left px-6 py-4 font-semibold uppercase tracking-wider text-xs" style={{ color: 'var(--ui-text-secondary)' }}>No. WhatsApp</th>
+                                    <th className="text-left px-6 py-4 font-semibold uppercase tracking-wider text-xs" style={{ color: 'var(--ui-text-secondary)' }}>Status</th>
+                                    <th className="text-left px-6 py-4 font-semibold uppercase tracking-wider text-xs" style={{ color: 'var(--ui-text-secondary)' }}>Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody className="divide-y divide-neutral-100">
+                            <tbody style={{ borderColor: 'var(--ui-divider)' }} className="divide-y">
                                 <AnimatePresence>
                                     {filtered.map(g => (
                                         <GuestRow
@@ -701,6 +753,7 @@ export default function GuestsPage() {
                                             template={msgTemplate}
                                             onMarkSent={markSent}
                                             onDelete={deleteGuest}
+                                            onRequestDelete={setPendingDelete}
                                         />
                                     ))}
                                 </AnimatePresence>

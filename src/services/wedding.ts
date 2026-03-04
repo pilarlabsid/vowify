@@ -1,14 +1,5 @@
-import { PrismaClient } from '@prisma/client';
-import { PrismaPg } from '@prisma/adapter-pg';
-import pg from 'pg';
+import { prisma } from '@/lib/prisma';
 import { WeddingData, GuestGreeting } from '@/lib/types';
-
-const pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-const adapter = new PrismaPg(pool);
-
-const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined };
-const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
 
 // Transform Prisma row to WeddingData shape
 function mapToWeddingData(w: any): WeddingData {
@@ -37,6 +28,7 @@ function mapToWeddingData(w: any): WeddingData {
             mapUrl: w.resepsiMapUrl,
         },
         gallery: w.gallery,
+        photos: (w.photos as Record<string, string>) ?? {},
         timeline: (w.timeline ?? []).map((t: any) => ({
             year: t.year,
             title: t.title,

@@ -36,9 +36,15 @@ function CreateWeddingForm({ onSuccess }: { onSuccess: () => void }) {
     };
 
     return (
-        <form onSubmit={handleSubmit} className="bg-white border border-neutral-200 rounded-3xl p-8 shadow-sm space-y-6">
-            <h3 className="text-lg font-bold text-neutral-900">Buat Undangan Baru</h3>
-            {error && <p className="text-red-500 text-sm bg-red-50 p-3 rounded-xl">{error}</p>}
+        <form onSubmit={handleSubmit} className="rounded-3xl p-8 border shadow-sm space-y-6"
+            style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}>
+            <h3 className="text-lg font-bold" style={{ color: 'var(--ui-text-primary)' }}>Buat Undangan Baru</h3>
+            {error && (
+                <p className="text-red-500 text-sm p-3 rounded-xl border"
+                    style={{ background: 'color-mix(in srgb, #EF4444 8%, transparent)', borderColor: 'color-mix(in srgb, #EF4444 20%, transparent)' }}>
+                    {error}
+                </p>
+            )}
 
             <FormGrid>
                 <FormField label="URL Slug *" placeholder="aditya-ratna" value={form.slug} onChange={set('slug')} required />
@@ -84,7 +90,7 @@ export default function WeddingsPage() {
     return (
         <div className="space-y-6">
             <div className="flex justify-between items-center">
-                <p className="text-neutral-500 text-sm">{weddings.length} undangan ditemukan</p>
+                <p className="text-sm" style={{ color: 'var(--ui-text-secondary)' }}>{weddings.length} undangan ditemukan</p>
                 <button
                     onClick={() => setShowForm(!showForm)}
                     className="flex items-center gap-2 bg-elegant text-gold border border-gold/30 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-gold hover:text-primary transition-all"

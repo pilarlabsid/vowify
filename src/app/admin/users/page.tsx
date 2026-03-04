@@ -4,8 +4,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, RefreshCw, Trash2, Check, X, Loader2,
-    UserCheck, UserX, Crown, ShieldCheck
+    UserCheck, UserX, Crown, ShieldCheck, Download, ChevronRight
 } from 'lucide-react';
+import Link from 'next/link';
 
 interface User {
     id: string;
@@ -23,10 +24,18 @@ function Badge({ children, color }: { children: React.ReactNode; color: string }
         gold: 'bg-amber-500/10 text-amber-500 border-amber-500/20',
         emerald: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
         red: 'bg-red-500/10 text-red-600 border-red-500/20',
-        slate: 'bg-neutral-100 text-neutral-400 border-neutral-200',
+        slate: 'border',
     };
+    const slateStyle = color === 'slate' ? {
+        background: 'var(--ui-badge-bg)',
+        color: 'var(--ui-text-muted)',
+        borderColor: 'var(--ui-border)',
+    } : {};
     return (
-        <span className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${colors[color]}`}>
+        <span
+            className={`px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider rounded-full border ${colors[color]}`}
+            style={slateStyle}
+        >
             {children}
         </span>
     );
@@ -36,15 +45,21 @@ function ActionBtn({ onClick, title, disabled, color, children }: any) {
     const colors: any = {
         amber: 'text-amber-500 bg-amber-500/10 hover:bg-amber-500/20 border-amber-500/20',
         emerald: 'text-emerald-500 bg-emerald-500/10 hover:bg-emerald-500/20 border-emerald-500/20',
-        slate: 'text-neutral-400 bg-neutral-100 hover:bg-neutral-200 border-neutral-200',
         red: 'text-red-500 bg-red-500/10 hover:bg-red-500/20 border-red-500/20',
+        slate: '',
     };
+    const slateStyle = color === 'slate' ? {
+        background: 'var(--ui-badge-bg)',
+        color: 'var(--ui-text-muted)',
+        borderColor: 'var(--ui-border)',
+    } : {};
     return (
         <button
             onClick={onClick}
             title={title}
             disabled={disabled}
             className={`p-1.5 rounded-lg border text-xs transition-all disabled:opacity-40 ${colors[color]}`}
+            style={slateStyle}
         >
             {children}
         </button>
@@ -59,22 +74,29 @@ function ConfirmDeleteModal({ user, onConfirm, onCancel, loading }: any) {
                 initial={{ opacity: 0, scale: 0.95, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
                 exit={{ opacity: 0, scale: 0.95 }}
-                className="relative bg-white rounded-3xl shadow-2xl p-7 w-full max-w-sm z-10"
+                className="relative rounded-3xl shadow-2xl p-7 w-full max-w-sm z-10"
+                style={{ background: 'var(--ui-bg-card)', color: 'var(--ui-text-primary)' }}
             >
                 <div className="flex flex-col items-center text-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-red-100 flex items-center justify-center">
+                    <div className="w-14 h-14 rounded-full flex items-center justify-center"
+                        style={{ background: 'color-mix(in srgb, #EF4444 12%, transparent)' }}>
                         <Trash2 className="w-7 h-7 text-red-500" />
                     </div>
                     <div>
-                        <h3 className="font-bold text-neutral-800 text-lg">Hapus User?</h3>
-                        <p className="text-neutral-500 text-sm mt-1.5 leading-relaxed">
+                        <h3 className="font-bold text-lg" style={{ color: 'var(--ui-text-primary)' }}>Hapus User?</h3>
+                        <p className="text-sm mt-1.5 leading-relaxed" style={{ color: 'var(--ui-text-secondary)' }}>
                             User <span className="font-bold text-red-500">{user?.name}</span> dan semua
                             undangan miliknya akan dihapus secara permanen.
                         </p>
                     </div>
                     <div className="flex gap-3 w-full pt-1">
                         <button onClick={onCancel} disabled={loading}
-                            className="flex-1 px-4 py-3 rounded-2xl border border-neutral-200 text-neutral-600 font-bold text-sm hover:bg-neutral-50 transition-all disabled:opacity-50">
+                            className="flex-1 px-4 py-3 rounded-2xl border font-bold text-sm transition-all disabled:opacity-50"
+                            style={{
+                                borderColor: 'var(--ui-border)',
+                                color: 'var(--ui-text-secondary)',
+                                background: 'var(--ui-bg-hover)',
+                            }}>
                             Batal
                         </button>
                         <button onClick={onConfirm} disabled={loading}
@@ -149,38 +171,55 @@ export default function AdminUsersPage() {
         <div className="space-y-6">
             {/* Toolbar */}
             <div className="flex items-center gap-3">
-                <div className="flex items-center gap-2 bg-white border border-neutral-200 shadow-sm rounded-xl px-4 py-2.5 flex-1 max-w-sm">
-                    <Search className="w-4 h-4 text-neutral-400" />
+                <div
+                    className="flex items-center gap-2 shadow-sm rounded-xl px-4 py-2.5 flex-1 max-w-sm border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}
+                >
+                    <Search className="w-4 h-4" style={{ color: 'var(--ui-text-muted)' }} />
                     <input
                         value={search}
                         onChange={e => { setSearch(e.target.value); setPage(1); }}
                         placeholder="Cari nama atau email..."
-                        className="bg-transparent text-neutral-900 text-sm focus:outline-none placeholder-neutral-400 flex-1"
+                        className="bg-transparent text-sm focus:outline-none flex-1"
+                        style={{ color: 'var(--ui-text-primary)' }}
                     />
                 </div>
-                <button onClick={fetchUsers} className="p-2.5 bg-white border border-neutral-200 shadow-sm rounded-xl text-neutral-500 hover:text-gold transition-colors">
+                <button onClick={fetchUsers}
+                    className="p-2.5 shadow-sm rounded-xl border transition-colors hover:text-gold"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', color: 'var(--ui-text-muted)' }}>
                     <RefreshCw className="w-4 h-4" />
                 </button>
-                <span className="text-neutral-500 text-sm ml-auto">{total} user ditemukan</span>
+                <a href="/api/admin/export/users" download
+                    className="flex items-center gap-2 px-4 py-2.5 shadow-sm rounded-xl text-sm font-semibold border hover:text-gold transition-all"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', color: 'var(--ui-text-secondary)' }}>
+                    <Download className="w-4 h-4" />
+                    Export CSV
+                </a>
+                <span className="text-sm ml-auto" style={{ color: 'var(--ui-text-muted)' }}>
+                    {total} user ditemukan
+                </span>
             </div>
 
             {/* Table */}
-            <div className="bg-white border border-neutral-200 shadow-sm rounded-2xl overflow-hidden">
+            <div
+                className="border shadow-sm rounded-2xl overflow-hidden"
+                style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)' }}
+            >
                 <table className="w-full text-sm">
                     <thead>
-                        <tr className="border-b border-neutral-100 bg-neutral-50/50">
-                            <th className="text-left px-6 py-4 text-neutral-500 font-semibold text-xs uppercase tracking-wider">User</th>
-                            <th className="text-left px-6 py-4 text-neutral-500 font-semibold text-xs uppercase tracking-wider">Status</th>
-                            <th className="text-left px-6 py-4 text-neutral-500 font-semibold text-xs uppercase tracking-wider">Undangan</th>
-                            <th className="text-left px-6 py-4 text-neutral-500 font-semibold text-xs uppercase tracking-wider">Bergabung</th>
-                            <th className="text-left px-6 py-4 text-neutral-500 font-semibold text-xs uppercase tracking-wider">Aksi</th>
+                        <tr className="border-b" style={{ borderColor: 'var(--ui-divider)', background: 'var(--ui-bg-hover)' }}>
+                            <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--ui-text-secondary)' }}>User</th>
+                            <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--ui-text-secondary)' }}>Status</th>
+                            <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--ui-text-secondary)' }}>Undangan</th>
+                            <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--ui-text-secondary)' }}>Bergabung</th>
+                            <th className="text-left px-6 py-4 font-semibold text-xs uppercase tracking-wider" style={{ color: 'var(--ui-text-secondary)' }}>Aksi</th>
                         </tr>
                     </thead>
-                    <tbody className="divide-y divide-neutral-100">
+                    <tbody>
                         {loading ? (
                             <tr><td colSpan={5} className="py-16 text-center"><Loader2 className="w-6 h-6 animate-spin text-gold mx-auto" /></td></tr>
                         ) : users.length === 0 ? (
-                            <tr><td colSpan={5} className="py-16 text-center text-neutral-500">Tidak ada user ditemukan</td></tr>
+                            <tr><td colSpan={5} className="py-16 text-center" style={{ color: 'var(--ui-text-secondary)' }}>Tidak ada user ditemukan</td></tr>
                         ) : (
                             <AnimatePresence>
                                 {users.map((user) => (
@@ -190,17 +229,28 @@ export default function AdminUsersPage() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="hover:bg-neutral-50/80 transition-colors"
+                                        className="transition-colors"
+                                        style={{ borderColor: 'var(--ui-divider)' }}
+                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--ui-bg-hover)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         {/* User info */}
                                         <td className="px-6 py-4">
                                             <div className="flex items-center gap-3">
-                                                <div className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${user.role === 'admin' ? 'bg-gold/20 text-gold' : 'bg-neutral-100 text-neutral-600'}`}>
+                                                <div
+                                                    className={`w-9 h-9 rounded-full flex items-center justify-center font-bold text-sm shrink-0 ${user.role === 'admin' ? 'bg-gold/20 text-gold' : ''}`}
+                                                    style={user.role !== 'admin' ? { background: 'var(--ui-bg-hover)', color: 'var(--ui-text-secondary)' } : {}}
+                                                >
                                                     {user.name?.[0]?.toUpperCase() || '?'}
                                                 </div>
                                                 <div className="min-w-0">
-                                                    <p className="text-neutral-900 font-medium truncate">{user.name}</p>
-                                                    <p className="text-neutral-500 text-xs truncate">{user.email}</p>
+                                                    <Link href={`/admin/users/${user.id}`}
+                                                        className="font-medium hover:text-gold transition-colors flex items-center gap-1 group"
+                                                        style={{ color: 'var(--ui-text-primary)' }}>
+                                                        <span className="truncate">{user.name}</span>
+                                                        <ChevronRight className="w-3.5 h-3.5 opacity-0 group-hover:opacity-100 transition-opacity shrink-0" />
+                                                    </Link>
+                                                    <p className="text-xs truncate" style={{ color: 'var(--ui-text-muted)' }}>{user.email}</p>
                                                 </div>
                                             </div>
                                         </td>
@@ -217,21 +267,20 @@ export default function AdminUsersPage() {
                                         </td>
 
                                         <td className="px-6 py-4">
-                                            <span className="text-neutral-900 font-bold">{user._count.weddings}</span>
-                                            <span className="text-neutral-500 text-xs ml-1">undangan</span>
+                                            <span className="font-bold" style={{ color: 'var(--ui-text-primary)' }}>{user._count.weddings}</span>
+                                            <span className="text-xs ml-1" style={{ color: 'var(--ui-text-secondary)' }}>undangan</span>
                                         </td>
 
-                                        <td className="px-6 py-4 text-neutral-500 text-xs">
+                                        <td className="px-6 py-4 text-xs" style={{ color: 'var(--ui-text-secondary)' }}>
                                             {new Date(user.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
                                         </td>
 
-                                        {/* Actions — always visible */}
+                                        {/* Actions */}
                                         <td className="px-6 py-4">
                                             {actionLoading === user.id ? (
                                                 <Loader2 className="w-4 h-4 animate-spin text-gold" />
                                             ) : (
                                                 <div className="flex items-center gap-1.5">
-                                                    {/* Jadikan / Cabut Admin */}
                                                     <ActionBtn
                                                         onClick={() => updateUser(user.id, { role: user.role === 'admin' ? 'user' : 'admin' })}
                                                         title={user.role === 'admin' ? 'Cabut Admin' : 'Jadikan Admin'}
@@ -240,7 +289,6 @@ export default function AdminUsersPage() {
                                                         <Crown className="w-3.5 h-3.5" />
                                                     </ActionBtn>
 
-                                                    {/* Verifikasi / Batalkan */}
                                                     {user.role !== 'admin' && (
                                                         <ActionBtn
                                                             onClick={() => updateUser(user.id, { emailVerified: !user.emailVerified })}
@@ -251,7 +299,6 @@ export default function AdminUsersPage() {
                                                         </ActionBtn>
                                                     )}
 
-                                                    {/* Blokir / Buka */}
                                                     <ActionBtn
                                                         onClick={() => updateUser(user.id, { isBlocked: !user.isBlocked })}
                                                         title={user.isBlocked ? 'Buka Blokir' : 'Blokir User'}
@@ -260,7 +307,6 @@ export default function AdminUsersPage() {
                                                         {user.isBlocked ? <UserCheck className="w-3.5 h-3.5" /> : <UserX className="w-3.5 h-3.5" />}
                                                     </ActionBtn>
 
-                                                    {/* Hapus */}
                                                     <ActionBtn
                                                         onClick={() => setDeleteTarget(user)}
                                                         title="Hapus User"
@@ -284,7 +330,12 @@ export default function AdminUsersPage() {
                 <div className="flex justify-center gap-2">
                     {Array.from({ length: Math.ceil(total / 20) }, (_, i) => i + 1).map(p => (
                         <button key={p} onClick={() => setPage(p)}
-                            className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === p ? 'bg-gold text-primary' : 'bg-white text-neutral-500 hover:text-neutral-900 border border-neutral-200 shadow-sm'}`}>
+                            className={`w-9 h-9 rounded-xl text-sm font-medium transition-all ${page === p ? 'bg-gold text-primary' : 'border shadow-sm'}`}
+                            style={page !== p ? {
+                                background: 'var(--ui-bg-card)',
+                                color: 'var(--ui-text-secondary)',
+                                borderColor: 'var(--ui-border)',
+                            } : {}}>
                             {p}
                         </button>
                     ))}

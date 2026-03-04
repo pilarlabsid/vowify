@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MailOpen, MapPin, Clock, CalendarHeart } from "lucide-react";
 import Image from "next/image";
+import './styles.css';
 
 interface Props {
     data: WeddingData;
@@ -30,7 +31,7 @@ export default function MinimalistTemplate({ data, guestName }: Props) {
     });
 
     return (
-        <main className="relative min-h-screen bg-white text-zinc-800 font-sans selection:bg-zinc-200">
+        <main data-template="minimalist" className="relative min-h-screen">
             <AnimatePresence>
                 {!isOpen && (
                     <motion.section

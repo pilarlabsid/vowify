@@ -14,6 +14,7 @@ import GamelanPlayer from "./components/GamelanPlayer";
 import GununganDivider from "./components/GununganDivider";
 import { useState, useEffect } from "react";
 import { AnimatePresence } from "framer-motion";
+import './styles.css';
 
 interface JavaneseTemplateProps {
     data: WeddingData;
@@ -32,8 +33,8 @@ export default function JavaneseTemplate({ data, guestName }: JavaneseTemplatePr
     }, [isOpen]);
 
     return (
-        <main className="relative min-h-screen bg-cream">
-            <div className="fixed inset-0 batik-overlay opacity-[0.03] pointer-events-none z-0"></div>
+        <main data-template="javanese" className="relative min-h-screen">
+            <div className="fixed inset-0 jv-batik pointer-events-none z-0"></div>
 
             <AnimatePresence>
                 {!isOpen && (

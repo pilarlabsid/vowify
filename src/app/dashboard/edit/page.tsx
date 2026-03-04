@@ -1,9 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Loader2, Check, Edit2 } from 'lucide-react';
+import { Loader2, Check, Edit2, Camera } from 'lucide-react';
 import { useDashboard } from '../dashboard-context';
 import { Section, FormGrid, FormField, SelectWeddingPrompt, TemplateSelector } from '../components';
+import Link from 'next/link';
 
 export default function EditPage() {
     const { selectedWedding: wedding, fetchWeddings, loading: ctxLoading } = useDashboard();
@@ -62,7 +63,12 @@ export default function EditPage() {
 
     return (
         <form onSubmit={handleSave} className="space-y-8">
-            {error && <p className="text-red-500 text-sm bg-red-50 p-3 rounded-xl">{error}</p>}
+            {error && (
+                <p className="text-red-500 text-sm p-3 rounded-xl border"
+                    style={{ background: 'color-mix(in srgb, #EF4444 8%, transparent)', borderColor: 'color-mix(in srgb, #EF4444 20%, transparent)' }}>
+                    {error}
+                </p>
+            )}
 
             <Section title="Mempelai Wanita">
                 <FormGrid>
@@ -70,6 +76,31 @@ export default function EditPage() {
                     <FormField label="Nama Singkat" value={form.brideShort} onChange={set('brideShort')} />
                     <FormField label="Orang Tua" value={form.brideParents} onChange={set('brideParents')} />
                 </FormGrid>
+                {/* Photo preview — reads from new photos map, fallback to legacy field */}
+                <div className="flex items-center gap-3 mt-1">
+                    {(() => {
+                        const wPhotos = (wedding as any).photos as Record<string, string> ?? {};
+                        const img = wPhotos['bride_portrait'] || (wedding as any).brideImage || '';
+                        return (
+                            <div className="w-12 h-16 rounded-xl overflow-hidden border flex-shrink-0"
+                                style={{ borderColor: 'var(--ui-border)', background: 'var(--ui-bg-hover)' }}>
+                                {img
+                                    ? <img src={img} alt="" className="w-full h-full object-cover" />
+                                    : <div className="w-full h-full flex items-center justify-center"><Camera className="w-4 h-4 opacity-30" style={{ color: 'var(--ui-text-muted)' }} /></div>
+                                }
+                            </div>
+                        );
+                    })()}
+                    <div>
+                        <p className="text-xs" style={{ color: 'var(--ui-text-muted)' }}>
+                            {((wedding as any).photos as Record<string, string>)?.['bride_portrait'] || (wedding as any).brideImage
+                                ? 'Foto mempelai wanita sudah diatur.' : 'Foto mempelai wanita belum diatur.'}
+                        </p>
+                        <Link href="/dashboard/gallery" className="text-xs font-semibold hover:underline" style={{ color: 'var(--color-gold, #c9a96e)' }}>
+                            Kelola Foto & Media →
+                        </Link>
+                    </div>
+                </div>
             </Section>
 
             <Section title="Mempelai Pria">
@@ -78,6 +109,31 @@ export default function EditPage() {
                     <FormField label="Nama Singkat" value={form.groomShort} onChange={set('groomShort')} />
                     <FormField label="Orang Tua" value={form.groomParents} onChange={set('groomParents')} />
                 </FormGrid>
+                {/* Photo preview — reads from new photos map, fallback to legacy field */}
+                <div className="flex items-center gap-3 mt-1">
+                    {(() => {
+                        const wPhotos = (wedding as any).photos as Record<string, string> ?? {};
+                        const img = wPhotos['groom_portrait'] || (wedding as any).groomImage || '';
+                        return (
+                            <div className="w-12 h-16 rounded-xl overflow-hidden border flex-shrink-0"
+                                style={{ borderColor: 'var(--ui-border)', background: 'var(--ui-bg-hover)' }}>
+                                {img
+                                    ? <img src={img} alt="" className="w-full h-full object-cover" />
+                                    : <div className="w-full h-full flex items-center justify-center"><Camera className="w-4 h-4 opacity-30" style={{ color: 'var(--ui-text-muted)' }} /></div>
+                                }
+                            </div>
+                        );
+                    })()}
+                    <div>
+                        <p className="text-xs" style={{ color: 'var(--ui-text-muted)' }}>
+                            {((wedding as any).photos as Record<string, string>)?.['groom_portrait'] || (wedding as any).groomImage
+                                ? 'Foto mempelai pria sudah diatur.' : 'Foto mempelai pria belum diatur.'}
+                        </p>
+                        <Link href="/dashboard/gallery" className="text-xs font-semibold hover:underline" style={{ color: 'var(--color-gold, #c9a96e)' }}>
+                            Kelola Foto & Media →
+                        </Link>
+                    </div>
+                </div>
             </Section>
 
             <Section title="Tanggal & Akad">

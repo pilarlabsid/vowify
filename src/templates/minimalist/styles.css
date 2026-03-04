@@ -1,0 +1,165 @@
+/*
+ * MINIMALIST TEMPLATE — styles.css
+ *
+ * CSS khusus untuk template Minimalist (modern, clean, sans-serif).
+ * File ini HANYA diimport oleh src/templates/minimalist/index.tsx
+ *
+ * Palette:
+ *   Putih, abu-abu, hitam, aksen emas tipis
+ *   Clean lines, banyak whitespace
+ */
+
+/* ── Color tokens khusus Minimalist ────────────────────────────────── */
+[data-template="minimalist"] {
+    --mn-bg: #FAFAFA;
+    /* Putih off-white */
+    --mn-bg-alt: #F4F4F2;
+    /* Abu sangat terang */
+    --mn-bg-dark: #1A1A1A;
+    /* Hitam — section hero/footer */
+    --mn-primary: #1A1A1A;
+    /* Hampir hitam */
+    --mn-secondary: #4A4A4A;
+    /* Abu tua */
+    --mn-muted: #888888;
+    /* Abu terang */
+    --mn-gold: #C6A75E;
+    /* Emas — satu-satunya aksen hangat */
+    --mn-gold-soft: rgba(198, 167, 94, 0.15);
+    --mn-white: #FFFFFF;
+    --mn-border: #E8E8E8;
+    --mn-border-soft: #F0F0F0;
+
+    /* Tipografi — lebih modern, pakai font body buatan sendiri */
+    --mn-font-serif: var(--font-serif);
+    /* Untuk judul elegan */
+    --mn-font-body: var(--font-body);
+    /* Untuk teks */
+    --mn-font-script: var(--font-script);
+    /* Untuk nama mempelai */
+    --mn-tracking: 0.1em;
+    /* Letterspace lebar — kesan mewah */
+
+    /* Efek */
+    --mn-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
+    --mn-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.10);
+
+    background: var(--mn-bg);
+    color: var(--mn-primary);
+    font-family: var(--mn-font-body);
+}
+
+/* ── Heading ────────────────────────────────────────────────────────── */
+[data-template="minimalist"] h1,
+[data-template="minimalist"] h2,
+[data-template="minimalist"] h3 {
+    font-family: var(--mn-font-serif);
+    font-weight: 300;
+    letter-spacing: var(--mn-tracking);
+    color: var(--mn-primary);
+}
+
+/* ── Nama mempelai ──────────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-names {
+    font-family: var(--mn-font-script);
+    color: var(--mn-primary);
+    line-height: 1.15;
+}
+
+/* ── Label uppercase ────────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-label {
+    font-family: var(--mn-font-body);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--mn-muted);
+}
+
+/* ── Garis tipis horizontal ─────────────────────────────────────────── */
+[data-template="minimalist"] .mn-hr {
+    width: 3rem;
+    height: 1px;
+    background: var(--mn-gold);
+    margin: 1.5rem auto;
+}
+
+[data-template="minimalist"] .mn-hr-full {
+    width: 100%;
+    height: 1px;
+    background: var(--mn-border);
+    margin: 2rem 0;
+}
+
+/* ── Section dark ───────────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-section-dark {
+    background: var(--mn-bg-dark);
+    color: var(--mn-white);
+}
+
+/* ── Tombol minimalist ──────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.875rem 2.5rem;
+    border: 1px solid var(--mn-primary);
+    background: transparent;
+    color: var(--mn-primary);
+    font-family: var(--mn-font-body);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    transition: all 0.25s ease;
+    cursor: pointer;
+}
+
+[data-template="minimalist"] .mn-btn:hover {
+    background: var(--mn-primary);
+    color: var(--mn-white);
+}
+
+[data-template="minimalist"] .mn-btn-gold {
+    border-color: var(--mn-gold);
+    color: var(--mn-gold);
+}
+
+[data-template="minimalist"] .mn-btn-gold:hover {
+    background: var(--mn-gold);
+    color: var(--mn-white);
+}
+
+/* ── Foto couple hero (landscape) ───────────────────────────────────── */
+[data-template="minimalist"] .mn-hero-photo {
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    width: 100%;
+}
+
+/* ── Portrait mempelai ──────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-portrait {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    box-shadow: var(--mn-shadow-lg);
+}
+
+/* ── Scrollbar minimalist ────────────────────────────────────────────── */
+[data-template="minimalist"] ::-webkit-scrollbar {
+    width: 3px;
+}
+
+[data-template="minimalist"] ::-webkit-scrollbar-track {
+    background: var(--mn-bg);
+}
+
+[data-template="minimalist"] ::-webkit-scrollbar-thumb {
+    background: var(--mn-primary);
+    border-radius: 9999px;
+}
+
+/* ── Seleksi ────────────────────────────────────────────────────────── */
+[data-template="minimalist"] ::selection {
+    background: var(--mn-gold-soft);
+    color: var(--mn-primary);
+}

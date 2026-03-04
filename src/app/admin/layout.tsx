@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react';
 import {
     LayoutDashboard, Users, Heart, LogOut,
-    Menu, X, Shield, ChevronRight, Loader2, Settings
+    Menu, X, Shield, Loader2, Settings
 } from 'lucide-react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
 import { usePathname, useRouter } from 'next/navigation';
+import { ThemeToggle } from '@/lib/theme-context';
 
 function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
     const { data: session } = useSession() as any;
@@ -19,31 +20,47 @@ function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
             <Link
                 href={href}
                 onClick={() => setIsSidebarOpen(false)}
-                className={`w-full flex items-center gap-3 py-3 px-4 rounded-2xl transition-all duration-200 group text-left ${active
-                    ? 'bg-gold text-primary font-bold shadow-lg shadow-gold/20'
-                    : 'text-cream/70 hover:bg-cream/5 hover:text-cream'
-                    }`}
+                className="w-full flex items-center gap-3 py-3 px-4 rounded-2xl transition-all duration-200 group text-left"
+                style={active ? {
+                    background: 'var(--ui-sidebar-nav-active)',
+                    color: '#1C1612',
+                    fontWeight: 700,
+                    boxShadow: '0 4px 12px rgba(198,167,94,0.25)',
+                } : {
+                    color: 'var(--ui-sidebar-text)',
+                }}
+                onMouseEnter={e => {
+                    if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--ui-sidebar-nav-hover)';
+                }}
+                onMouseLeave={e => {
+                    if (!active) (e.currentTarget as HTMLElement).style.background = '';
+                }}
             >
-                <span className={active ? '' : 'text-gold/50 group-hover:text-gold/80'}>{icon}</span>
+                <span className={active ? 'text-primary' : ''} style={!active ? { color: 'rgba(198,167,94,0.6)' } : {}}>{icon}</span>
                 <span className="text-sm font-medium">{label}</span>
-                {active && <ChevronRight className="w-4 h-4 ml-auto opacity-50" />}
             </Link>
         );
     };
 
     return (
-        <aside className={`
-            fixed inset-y-0 left-0 w-64 bg-elegant text-cream flex flex-col p-6 space-y-8 z-50
-            transition-transform duration-300 ease-in-out
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
-            lg:translate-x-0 lg:relative
-        `}>
+        <aside
+            className={`
+                fixed inset-y-0 left-0 w-64 flex flex-col p-6 space-y-8 z-50
+                transition-transform duration-300 ease-in-out
+                ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+                lg:translate-x-0 lg:relative
+            `}
+            style={{
+                background: 'var(--ui-sidebar-bg)',
+                borderRight: '1px solid var(--ui-sidebar-border)',
+            }}
+        >
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                     <div className="w-10 h-10 bg-gold rounded-xl flex items-center justify-center text-primary font-bold text-xl font-script">V</div>
                     <span className="text-2xl font-script tracking-wide text-gold">Vowify.id</span>
                 </div>
-                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 text-gold hover:bg-cream/10 rounded-lg">
+                <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 rounded-lg" style={{ color: 'var(--ui-sidebar-text)' }}>
                     <X className="w-5 h-5" />
                 </button>
             </div>
@@ -53,10 +70,10 @@ function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
                     {session?.user?.name?.[0]?.toUpperCase() ?? 'A'}
                 </div>
                 <div className="min-w-0">
-                    <p className="text-cream font-semibold text-sm truncate leading-tight">{session?.user?.name}</p>
+                    <p className="font-semibold text-sm truncate leading-tight" style={{ color: 'var(--ui-sidebar-text)' }}>{session?.user?.name}</p>
                     <div className="flex items-center gap-1 mt-0.5">
-                        <Shield className="w-3 h-3 text-gold" />
-                        <p className="text-gold text-[10px] font-bold uppercase tracking-wider">Super Admin</p>
+                        <Shield className="w-3 h-3 text-gold shrink-0" />
+                        <p className="text-[11px] truncate" style={{ color: 'var(--ui-sidebar-text-muted)' }}>{session?.user?.email}</p>
                     </div>
                 </div>
             </div>
@@ -70,7 +87,8 @@ function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
 
             <button
                 onClick={() => signOut({ callbackUrl: '/login' })}
-                className="flex items-center gap-3 text-cream/60 hover:text-red-400 transition-colors py-3 px-4 rounded-xl border border-cream/10 hover:border-red-400/20"
+                className="flex items-center gap-3 transition-colors py-3 px-4 rounded-xl border hover:text-red-400 hover:border-red-400/20"
+                style={{ color: 'var(--ui-sidebar-text-muted)', borderColor: 'var(--ui-sidebar-border)' }}
             >
                 <LogOut className="w-5 h-5" />
                 <span className="font-medium text-sm">Keluar</span>
@@ -90,18 +108,47 @@ function AdminHeader({ setIsSidebarOpen }: any) {
     };
 
     return (
-        <header className="sticky top-0 bg-neutral-50/90 backdrop-blur-md z-30 px-6 lg:px-10 py-4 border-b border-neutral-200 flex items-center justify-between gap-4">
+        <header
+            className="sticky top-0 backdrop-blur-md z-30 px-6 lg:px-10 py-4 border-b flex items-center justify-between gap-4"
+            style={{
+                background: 'var(--ui-header-bg)',
+                borderColor: 'var(--ui-border)',
+            }}
+        >
             <div className="flex items-center gap-4">
-                <button onClick={() => setIsSidebarOpen(true)} className="lg:hidden p-2 bg-white border border-neutral-200 rounded-xl shadow-sm">
+                <button
+                    onClick={() => setIsSidebarOpen(true)}
+                    className="lg:hidden p-2 rounded-xl border shadow-sm transition-colors"
+                    style={{
+                        background: 'var(--ui-bg-card)',
+                        borderColor: 'var(--ui-border)',
+                        color: 'var(--ui-text-secondary)',
+                    }}
+                >
                     <Menu className="w-5 h-5" />
                 </button>
                 <div className="hidden sm:block">
-                    <h1 className="text-lg lg:text-2xl font-bold text-neutral-900 capitalize">{getTitle()}</h1>
+                    <h1
+                        className="text-lg lg:text-2xl font-bold capitalize"
+                        style={{ color: 'var(--ui-text-primary)' }}
+                    >
+                        {getTitle()}
+                    </h1>
                 </div>
             </div>
-            <div className="flex items-center gap-2 bg-gold/10 border border-gold/20 px-4 py-2 rounded-full">
-                <Shield className="w-4 h-4 text-gold" />
-                <span className="text-gold text-xs font-bold uppercase tracking-wider">Admin System</span>
+
+            <div className="flex items-center gap-3">
+                <ThemeToggle id="theme-toggle-admin" />
+                <div
+                    className="flex items-center gap-2 px-4 py-2 rounded-full border"
+                    style={{
+                        background: 'color-mix(in srgb, #C6A75E 10%, transparent)',
+                        borderColor: 'color-mix(in srgb, #C6A75E 20%, transparent)',
+                    }}
+                >
+                    <Shield className="w-4 h-4 text-gold" />
+                    <span className="text-gold text-xs font-bold uppercase tracking-wider">Admin System</span>
+                </div>
             </div>
         </header>
     );
@@ -120,29 +167,37 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         }
     }, [status, session, router]);
 
-    // Block ALL rendering until we know for sure who the user is
     if (status === 'loading' || status === 'unauthenticated') {
         return (
-            <div className="flex flex-col h-screen bg-neutral-50 items-center justify-center">
+            <div
+                className="flex flex-col h-screen items-center justify-center"
+                style={{ background: 'var(--ui-bg)' }}
+            >
                 <Loader2 className="w-8 h-8 animate-spin text-gold" />
             </div>
         );
     }
 
-    // Authenticated but not admin – show spinner while redirect kicks in
     if ((session?.user as any)?.role !== 'admin') {
         return (
-            <div className="flex flex-col h-screen bg-neutral-50 items-center justify-center">
+            <div
+                className="flex flex-col h-screen items-center justify-center"
+                style={{ background: 'var(--ui-bg)' }}
+            >
                 <Loader2 className="w-8 h-8 animate-spin text-gold" />
             </div>
         );
     }
 
     return (
-        <div className="flex flex-col lg:flex-row h-screen bg-neutral-50 text-neutral-800 font-sans overflow-hidden">
+        <div
+            data-zone="admin"
+            className="flex flex-col lg:flex-row h-screen font-sans overflow-hidden"
+        >
             {isSidebarOpen && (
                 <div
-                    className="fixed inset-0 bg-elegant/60 backdrop-blur-sm z-[40] lg:hidden"
+                    className="fixed inset-0 backdrop-blur-sm z-[40] lg:hidden"
+                    style={{ background: 'var(--ui-overlay)' }}
                     onClick={() => setIsSidebarOpen(false)}
                 />
             )}

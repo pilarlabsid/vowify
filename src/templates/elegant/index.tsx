@@ -5,6 +5,7 @@ import { useState, useEffect } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { MailOpen, MapPin, Clock, CalendarHeart } from "lucide-react";
 import Image from "next/image";
+import './styles.css';
 
 interface Props {
     data: WeddingData;
@@ -30,7 +31,7 @@ export default function ElegantTemplate({ data, guestName }: Props) {
     });
 
     return (
-        <main className="relative min-h-screen bg-[#0a0f12] text-[#e0cfb3] font-serif selection:bg-[#c9a763] selection:text-black">
+        <main data-template="elegant" className="relative min-h-screen">
             {/* Background texture pattern for elegant look */}
             <div className="fixed inset-0 opacity-5 pointer-events-none mix-blend-overlay bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] z-0"></div>
 

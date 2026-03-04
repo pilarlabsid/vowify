@@ -3,10 +3,12 @@ export interface WeddingData {
     slug: string;
     brideName: string;
     brideShort: string;
+    /** @deprecated Use photos.bride_portrait instead */
     brideImage: string;
     brideParents: string;
     groomName: string;
     groomShort: string;
+    /** @deprecated Use photos.groom_portrait instead */
     groomImage: string;
     groomParents: string;
     date: string;
@@ -23,6 +25,11 @@ export interface WeddingData {
         mapUrl: string;
     };
     gallery: string[];
+    /**
+     * Template-specific photo slots, keyed by slot key (e.g. "bride_portrait").
+     * Dashboard writes here; template components read from here via resolvePhoto().
+     */
+    photos: Record<string, string>;
     timeline: {
         year: string;
         title: string;

@@ -1,41 +1,212 @@
 @import "tailwindcss";
 
+/* ═══════════════════════════════════════════════════════════════════
+   GLOBALS.CSS — Vowify.id
+   
+   Struktur isolasi CSS per zona:
+   
+   ┌─ [data-zone="app"]       → Landing page, login, register
+   ├─ [data-zone="dashboard"] → Dashboard user & admin panel  
+   └─ [data-zone="template"]  → Halaman undangan (slug)
+   
+   Masing-masing zona punya CSS variables sendiri.
+   Perubahan di satu zona TIDAK akan mempengaruhi zona lain.
+   
+   Token brand (warna, font) ada di :root dan bisa dishare,
+   tapi token UI (--ui-*) hanya aktif di zona dashboard/admin.
+══════════════════════════════════════════════════════════════════════ */
+
+/* ── Global brand tokens (shared across ALL zones) ────────────────── */
 :root {
-  /* Tailwind CSS v4 automatically discovers variables with these prefixes */
   --color-primary: #3E2723;
   --color-gold: #C6A75E;
   --color-cream: #F5E6CA;
   --color-elegant: #1C1C1C;
-
-  --background: var(--color-cream);
-  --foreground: var(--color-primary);
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
+/* ══════════════════════════════════════════════════════════════════
+   ZONA: DASHBOARD & ADMIN
+   Berlaku untuk [data-zone="dashboard"] dan [data-zone="admin"]
+   CSS variables --ui-* hanya hidup di dalam zona ini.
+   Template undangan tidak akan terpengaruh sama sekali.
+══════════════════════════════════════════════════════════════════════ */
+
+/* Light mode */
+[data-zone="dashboard"],
+[data-zone="admin"] {
+  --ui-bg: #F8F7F4;
+  --ui-bg-card: #FFFFFF;
+  --ui-bg-hover: #F3F0EB;
+  --ui-border: #E5E0D8;
+  --ui-border-subtle: #EDE9E3;
+  --ui-text-primary: #1C1612;
+  --ui-text-secondary: #6B6560;
+  --ui-text-muted: #9E9891;
+  --ui-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --ui-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --ui-header-bg: rgba(248, 247, 244, 0.92);
+  --ui-sidebar-bg: #F0EBE3;
+  --ui-sidebar-border: #E2DAD0;
+  --ui-sidebar-text: #3E2723;
+  --ui-sidebar-text-muted: rgba(62, 39, 35, 0.55);
+  --ui-sidebar-nav-active: #C6A75E;
+  --ui-sidebar-nav-hover: rgba(62, 39, 35, 0.06);
+  --ui-overlay: rgba(28, 28, 28, 0.60);
+  --ui-announcement-bg: #FFFBEB;
+  --ui-announcement-border: #FDE68A;
+  --ui-announcement-text: #92400E;
+  --ui-badge-bg: #F5F5F5;
+  --ui-badge-text: #6B7280;
+  --ui-divider: #F0EDE8;
+  --ui-input-bg: #F9F8F6;
+  --ui-input-border: #D1CCC4;
+  --ui-input-focus: #C6A75E;
+  --ui-scrollbar: #D1CCC4;
+
+  background: var(--ui-bg);
+  color: var(--ui-text-primary);
+}
+
+/* Dark mode */
+.dark [data-zone="dashboard"],
+.dark [data-zone="admin"] {
+  --ui-bg: #111009;
+  --ui-bg-card: #1A1914;
+  --ui-bg-hover: #1F1E18;
+  --ui-border: #2C2920;
+  --ui-border-subtle: #242219;
+  --ui-text-primary: #EDE8DF;
+  --ui-text-secondary: #A09A8F;
+  --ui-text-muted: #6B6560;
+  --ui-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.30), 0 1px 2px -1px rgb(0 0 0 / 0.30);
+  --ui-shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.35), 0 2px 4px -2px rgb(0 0 0 / 0.35);
+  --ui-header-bg: rgba(17, 16, 9, 0.92);
+  --ui-sidebar-bg: #0A0906;
+  --ui-sidebar-border: #1A1812;
+  --ui-sidebar-text: #C7B89A;
+  --ui-sidebar-text-muted: rgba(199, 184, 154, 0.55);
+  --ui-sidebar-nav-active: rgba(198, 167, 94, 1);
+  --ui-sidebar-nav-hover: rgba(255, 255, 255, 0.05);
+  --ui-overlay: rgba(0, 0, 0, 0.70);
+  --ui-announcement-bg: #1C1A0F;
+  --ui-announcement-border: #3D3410;
+  --ui-announcement-text: #D97706;
+  --ui-badge-bg: #242219;
+  --ui-badge-text: #A09A8F;
+  --ui-divider: #242219;
+  --ui-input-bg: #1A1914;
+  --ui-input-border: #2C2920;
+  --ui-input-focus: #C6A75E;
+  --ui-scrollbar: #2C2920;
+
+  background: var(--ui-bg);
+  color: var(--ui-text-primary);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ZONA: APP (Landing page, login, register)
+   Berlaku untuk [data-zone="app"]
+   Bisa ikut dark mode tapi punya palette landingnya sendiri.
+══════════════════════════════════════════════════════════════════════ */
+
+[data-zone="app"] {
+  --app-bg: var(--color-cream);
+  --app-fg: var(--color-primary);
+  --app-gold: var(--color-gold);
+
+  background: var(--app-bg);
+  color: var(--app-fg);
+}
+
+.dark [data-zone="app"] {
+  --app-bg: #0F0E0C;
+  --app-fg: #F5E6CA;
+
+  background: var(--app-bg);
+  color: var(--app-fg);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BASE / RESET — Berlaku global di semua zona
+══════════════════════════════════════════════════════════════════════ */
+
+html {
   overflow-x: hidden;
 }
 
-.batik-overlay {
-  background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
-  /* Fallback pattern */
-  background-repeat: repeat;
-  opacity: 0.05;
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  z-index: 1;
+body {
+  overflow-x: hidden;
 }
 
-h1,
-h2,
-h3 {
-  font-family: var(--font-serif);
+/* Smooth transition untuk dark mode (hanya di dashboard/admin) */
+[data-zone="dashboard"] *,
+[data-zone="dashboard"] *::before,
+[data-zone="dashboard"] *::after,
+[data-zone="admin"] *,
+[data-zone="admin"] *::before,
+[data-zone="admin"] *::after {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: ease;
+  transition-duration: 200ms;
 }
 
-@layer utilities {
-  .text-script {
-    font-family: var(--font-script);
-  }
+/* ── Scrollbar — hanya di dashboard/admin ──────────────────────────── */
+[data-zone="dashboard"] ::-webkit-scrollbar,
+[data-zone="admin"] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-zone="dashboard"] ::-webkit-scrollbar-track,
+[data-zone="admin"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-zone="dashboard"] ::-webkit-scrollbar-thumb,
+[data-zone="admin"] ::-webkit-scrollbar-thumb {
+  background: var(--ui-scrollbar);
+  border-radius: 9999px;
+}
+
+/* ── Script font utility ────────────────────────────────────────────── */
+.text-script {
+  font-family: var(--font-script);
+}
+
+/* ── Dashboard utility classes (hanya aktif dalam zona) ─────────────── */
+[data-zone="dashboard"] .ui-bg,
+[data-zone="admin"] .ui-bg {
+  background: var(--ui-bg);
+}
+
+[data-zone="dashboard"] .ui-card,
+[data-zone="admin"] .ui-card {
+  background: var(--ui-bg-card);
+  border-color: var(--ui-border);
+  box-shadow: var(--ui-shadow);
+}
+
+[data-zone="dashboard"] .ui-text,
+[data-zone="admin"] .ui-text {
+  color: var(--ui-text-primary);
+}
+
+[data-zone="dashboard"] .ui-text-muted,
+[data-zone="admin"] .ui-text-muted {
+  color: var(--ui-text-muted);
+}
+
+[data-zone="dashboard"] .ui-text-secondary,
+[data-zone="admin"] .ui-text-secondary {
+  color: var(--ui-text-secondary);
+}
+
+[data-zone="dashboard"] .ui-border,
+[data-zone="admin"] .ui-border {
+  border-color: var(--ui-border);
+}
+
+[data-zone="dashboard"] .ui-divider,
+[data-zone="admin"] .ui-divider {
+  border-color: var(--ui-divider);
 }

@@ -34,14 +34,21 @@ function StatCard({ label, value, icon, color, sub, href }: any) {
         <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm hover:shadow-md transition-shadow"
+            className="rounded-2xl p-5 border transition-shadow hover:shadow-md"
+            style={{
+                background: 'var(--ui-bg-card)',
+                borderColor: 'var(--ui-border)',
+                boxShadow: 'var(--ui-shadow)',
+            }}
         >
             <div className={`w-10 h-10 rounded-xl border flex items-center justify-center mb-3 ${colors[color]}`}>
                 {icon}
             </div>
-            <p className="text-2xl font-bold text-neutral-900 tabular-nums">{value?.toLocaleString('id-ID') ?? '–'}</p>
-            <p className="text-neutral-500 text-sm mt-0.5">{label}</p>
-            {sub && <p className="text-neutral-400 text-xs mt-0.5">{sub}</p>}
+            <p className="text-2xl font-bold tabular-nums" style={{ color: 'var(--ui-text-primary)' }}>
+                {value?.toLocaleString('id-ID') ?? '–'}
+            </p>
+            <p className="text-sm mt-0.5" style={{ color: 'var(--ui-text-secondary)' }}>{label}</p>
+            {sub && <p className="text-xs mt-0.5" style={{ color: 'var(--ui-text-muted)' }}>{sub}</p>}
         </motion.div>
     );
     return href ? <Link href={href}>{card}</Link> : card;
@@ -122,26 +129,32 @@ export default function AdminDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Growth chart */}
-                <div className="lg:col-span-2 bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm">
+                <div
+                    className="lg:col-span-2 rounded-2xl p-6 border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}
+                >
                     <div className="flex items-center justify-between mb-4">
-                        <h2 className="font-bold text-neutral-900 flex items-center gap-2 text-sm">
+                        <h2 className="font-bold flex items-center gap-2 text-sm" style={{ color: 'var(--ui-text-primary)' }}>
                             <Activity className="w-4 h-4 text-gold" />
                             Pertumbuhan User (30 hari terakhir)
                         </h2>
-                        <span className="text-xs text-neutral-400">
+                        <span className="text-xs" style={{ color: 'var(--ui-text-muted)' }}>
                             +{growthData.reduce((s, d) => s + d.count, 0)} user baru
                         </span>
                     </div>
                     {growthData.length > 0 && <MiniBar data={growthData} />}
-                    <div className="flex justify-between text-[10px] text-neutral-400 mt-2">
+                    <div className="flex justify-between text-[10px] mt-2" style={{ color: 'var(--ui-text-muted)' }}>
                         <span>{growthData[0]?.date.slice(5)}</span>
                         <span>{growthData[growthData.length - 1]?.date.slice(5)}</span>
                     </div>
                 </div>
 
                 {/* Theme popularity */}
-                <div className="bg-white border border-neutral-200 rounded-2xl p-6 shadow-sm">
-                    <h2 className="font-bold text-neutral-900 text-sm mb-4 flex items-center gap-2">
+                <div
+                    className="rounded-2xl p-6 border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}
+                >
+                    <h2 className="font-bold text-sm mb-4 flex items-center gap-2" style={{ color: 'var(--ui-text-primary)' }}>
                         <Heart className="w-4 h-4 text-gold" />
                         Tema Terpopuler
                     </h2>
@@ -151,11 +164,11 @@ export default function AdminDashboard() {
                             const pct = total ? Math.round((t.count / total) * 100) : 0;
                             return (
                                 <div key={t.theme}>
-                                    <div className="flex justify-between text-xs text-neutral-600 mb-1">
+                                    <div className="flex justify-between text-xs mb-1" style={{ color: 'var(--ui-text-secondary)' }}>
                                         <span className="capitalize font-medium">{t.theme}</span>
                                         <span>{t.count} ({pct}%)</span>
                                     </div>
-                                    <div className="h-2 bg-neutral-100 rounded-full overflow-hidden">
+                                    <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--ui-bg-hover)' }}>
                                         <div
                                             className={`h-full rounded-full ${themeColors[t.theme] || 'bg-neutral-400'}`}
                                             style={{ width: `${pct}%` }}
@@ -165,7 +178,7 @@ export default function AdminDashboard() {
                             );
                         })}
                         {themeStats.length === 0 && (
-                            <p className="text-neutral-400 text-sm text-center py-4">Belum ada data</p>
+                            <p className="text-sm text-center py-4" style={{ color: 'var(--ui-text-muted)' }}>Belum ada data</p>
                         )}
                     </div>
                 </div>
@@ -173,9 +186,15 @@ export default function AdminDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Recent Users */}
-                <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
-                    <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-                        <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
+                <div
+                    className="rounded-2xl overflow-hidden border"
+                    style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}
+                >
+                    <div
+                        className="px-6 py-4 border-b flex items-center justify-between"
+                        style={{ borderColor: 'var(--ui-divider)' }}
+                    >
+                        <h2 className="font-bold text-sm flex items-center gap-2" style={{ color: 'var(--ui-text-primary)' }}>
                             <TrendingUp className="w-4 h-4 text-gold" />
                             User Terbaru
                         </h2>
@@ -183,24 +202,30 @@ export default function AdminDashboard() {
                             Lihat semua <ArrowRight className="w-3 h-3" />
                         </Link>
                     </div>
-                    <div className="divide-y divide-neutral-100">
+                    <div>
                         {recentUsers.map((u: any) => (
-                            <div key={u.id} className="px-6 py-3 flex items-center gap-3">
+                            <div
+                                key={u.id}
+                                className="px-6 py-3 flex items-center gap-3 border-b"
+                                style={{ borderColor: 'var(--ui-divider)' }}
+                            >
                                 <div className="w-8 h-8 bg-gold/10 rounded-full flex items-center justify-center text-gold font-bold text-xs shrink-0">
                                     {u.name?.[0]?.toUpperCase() || '?'}
                                 </div>
                                 <div className="min-w-0 flex-1">
-                                    <p className="text-neutral-900 text-sm font-medium truncate">{u.name}</p>
-                                    <p className="text-neutral-500 text-xs truncate">{u.email}</p>
+                                    <p className="text-sm font-medium truncate" style={{ color: 'var(--ui-text-primary)' }}>{u.name}</p>
+                                    <p className="text-xs truncate" style={{ color: 'var(--ui-text-secondary)' }}>{u.email}</p>
                                 </div>
                                 <div className="flex items-center gap-1.5 shrink-0">
                                     {u.role === 'admin' && (
                                         <span className="px-1.5 py-0.5 bg-gold/10 text-gold border border-gold/20 text-[9px] font-bold rounded-full">ADMIN</span>
                                     )}
                                     {u.isBlocked && (
-                                        <span className="px-1.5 py-0.5 bg-red-100 text-red-500 border border-red-200 text-[9px] font-bold rounded-full">BLOKIR</span>
+                                        <span className="px-1.5 py-0.5 text-[9px] font-bold rounded-full border"
+                                            style={{ background: 'color-mix(in srgb, #EF4444 12%, transparent)', color: '#EF4444', borderColor: 'color-mix(in srgb, #EF4444 25%, transparent)' }}>BLOKIR</span>
                                     )}
-                                    <span className={`w-2 h-2 rounded-full ${u.emailVerified ? 'bg-emerald-400' : 'bg-slate-300'}`}
+                                    <span className={`w-2 h-2 rounded-full`}
+                                        style={{ background: u.emailVerified ? '#10B981' : 'var(--ui-border)' }}
                                         title={u.emailVerified ? 'Terverifikasi' : 'Belum'} />
                                 </div>
                             </div>
@@ -210,9 +235,15 @@ export default function AdminDashboard() {
 
                 {/* Recent Weddings + Quick Actions */}
                 <div className="space-y-4">
-                    <div className="bg-white border border-neutral-200 rounded-2xl overflow-hidden shadow-sm">
-                        <div className="px-6 py-4 border-b border-neutral-100 flex items-center justify-between">
-                            <h2 className="font-bold text-neutral-900 text-sm flex items-center gap-2">
+                    <div
+                        className="rounded-2xl overflow-hidden border"
+                        style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}
+                    >
+                        <div
+                            className="px-6 py-4 border-b flex items-center justify-between"
+                            style={{ borderColor: 'var(--ui-divider)' }}
+                        >
+                            <h2 className="font-bold text-sm flex items-center gap-2" style={{ color: 'var(--ui-text-primary)' }}>
                                 <Heart className="w-4 h-4 text-gold" />
                                 Undangan Terbaru
                             </h2>
@@ -220,16 +251,31 @@ export default function AdminDashboard() {
                                 Lihat semua <ArrowRight className="w-3 h-3" />
                             </Link>
                         </div>
-                        <div className="divide-y divide-neutral-100">
+                        <div>
                             {recentActivities.map((w: any) => (
-                                <div key={w.id} className="px-6 py-3 flex items-center gap-3">
+                                <div
+                                    key={w.id}
+                                    className="px-6 py-3 flex items-center gap-3 border-b"
+                                    style={{ borderColor: 'var(--ui-divider)' }}
+                                >
                                     <div className="min-w-0 flex-1">
-                                        <p className="text-neutral-900 text-sm font-semibold truncate">{w.groomShort} & {w.brideShort}</p>
-                                        <p className="text-neutral-400 text-xs truncate">
+                                        <p className="text-sm font-semibold truncate" style={{ color: 'var(--ui-text-primary)' }}>
+                                            {w.groomShort} & {w.brideShort}
+                                        </p>
+                                        <p className="text-xs truncate" style={{ color: 'var(--ui-text-muted)' }}>
                                             by {w.user?.name || 'Unknown'} · /{w.slug}
                                         </p>
                                     </div>
-                                    <span className={`px-2 py-0.5 text-[10px] font-bold rounded-full border shrink-0 ${w.isPublished ? 'bg-emerald-100 text-emerald-600 border-emerald-200' : 'bg-neutral-100 text-neutral-500 border-neutral-200'}`}>
+                                    <span className="px-2 py-0.5 text-[10px] font-bold rounded-full border shrink-0"
+                                        style={w.isPublished ? {
+                                            background: 'color-mix(in srgb, #10B981 10%, transparent)',
+                                            color: '#059669',
+                                            borderColor: 'color-mix(in srgb, #10B981 25%, transparent)',
+                                        } : {
+                                            background: 'var(--ui-badge-bg)',
+                                            color: 'var(--ui-text-muted)',
+                                            borderColor: 'var(--ui-border)',
+                                        }}>
                                         {w.isPublished ? 'Publik' : 'Draft'}
                                     </span>
                                 </div>
@@ -238,14 +284,17 @@ export default function AdminDashboard() {
                     </div>
 
                     {/* Quick Actions */}
-                    <div className="bg-white border border-neutral-200 rounded-2xl p-5 shadow-sm">
-                        <h2 className="font-bold text-neutral-900 text-sm mb-3">⚡ Aksi Cepat</h2>
+                    <div
+                        className="rounded-2xl p-5 border"
+                        style={{ background: 'var(--ui-bg-card)', borderColor: 'var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}
+                    >
+                        <h2 className="font-bold text-sm mb-3" style={{ color: 'var(--ui-text-primary)' }}>⚡ Aksi Cepat</h2>
                         <div className="grid grid-cols-2 gap-2">
                             {[
                                 { label: 'Kelola User', href: '/admin/users', color: 'bg-blue-500/10 text-blue-600 hover:bg-blue-500/20' },
                                 { label: 'Undangan', href: '/admin/weddings', color: 'bg-amber-500/10 text-amber-600 hover:bg-amber-500/20' },
                                 { label: 'Pengaturan', href: '/admin/settings', color: 'bg-purple-500/10 text-purple-600 hover:bg-purple-500/20' },
-                                { label: 'Prisma Studio', href: 'http://localhost:5555', color: 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20', external: true },
+                                { label: 'Prisma Studio', href: 'http://localhost:51212', color: 'bg-emerald-500/10 text-emerald-600 hover:bg-emerald-500/20', external: true },
                             ].map(a => (
                                 <a key={a.href} href={a.href} target={a.external ? '_blank' : undefined}
                                     className={`flex items-center justify-center py-3 px-3 rounded-xl text-sm font-bold transition-all text-center ${a.color}`}>

@@ -1,0 +1,181 @@
+/*
+ * ELEGANT TEMPLATE — styles.css
+ *
+ * CSS khusus untuk template Elegant (mewah, glamour, full-screen).
+ * File ini HANYA diimport oleh src/templates/elegant/index.tsx
+ *
+ * Palette:
+ *   Hitam dalam, emas terang, putih gading
+ *   Full-screen hero, tipografi besar, spasi luas
+ */
+
+/* ── Color tokens khusus Elegant ───────────────────────────────────── */
+[data-template="elegant"] {
+    --el-bg: #0D0B09;
+    /* Hitam dalam — sangat gelap */
+    --el-bg-card: #161210;
+    /* Card background */
+    --el-bg-light: #F8F3EA;
+    /* Krem putih — section terang */
+    --el-primary: #F8F3EA;
+    /* Teks utama di background gelap */
+    --el-gold: #D4AF70;
+    /* Emas terang — lebih vivid */
+    --el-gold-light: #E8C882;
+    /* Emas muda — highlight */
+    --el-gold-dark: #B89050;
+    /* Emas tua */
+    --el-rose: #C9A0A0;
+    /* Rose gold soft */
+    --el-white: #FFFFFF;
+    --el-dark: #0D0B09;
+    --el-border: rgba(212, 175, 112, 0.20);
+    --el-border-soft: rgba(212, 175, 112, 0.10);
+
+    /* Tipografi — sangat serif, lebar, mewah */
+    --el-font-serif: var(--font-serif);
+    --el-font-body: var(--font-body);
+    --el-font-script: var(--font-script);
+    --el-tracking-xl: 0.3em;
+    /* Letterspace sangat lebar */
+    --el-tracking-lg: 0.15em;
+
+    /* Efek */
+    --el-shadow: 0 4px 30px rgba(0, 0, 0, 0.50);
+    --el-shadow-gold: 0 4px 30px rgba(212, 175, 112, 0.20);
+    --el-glow: 0 0 60px rgba(212, 175, 112, 0.08);
+
+    background: var(--el-bg);
+    color: var(--el-primary);
+    font-family: var(--el-font-body);
+}
+
+/* ── Heading ────────────────────────────────────────────────────────── */
+[data-template="elegant"] h1,
+[data-template="elegant"] h2,
+[data-template="elegant"] h3 {
+    font-family: var(--el-font-serif);
+    font-weight: 300;
+    letter-spacing: var(--el-tracking-xl);
+    color: var(--el-gold);
+}
+
+/* ── Nama mempelai besar di hero ────────────────────────────────────── */
+[data-template="elegant"] .el-names {
+    font-family: var(--el-font-script);
+    color: var(--el-gold);
+    line-height: 1;
+    text-shadow: 0 2px 20px rgba(212, 175, 112, 0.30);
+}
+
+/* ── Label uppercase dengan tracking lebar ──────────────────────────── */
+[data-template="elegant"] .el-label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    letter-spacing: var(--el-tracking-xl);
+    text-transform: uppercase;
+    color: var(--el-gold);
+    opacity: 0.8;
+}
+
+/* ── Garis ornamen emas ─────────────────────────────────────────────── */
+[data-template="elegant"] .el-ornament {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+[data-template="elegant"] .el-ornament::before,
+[data-template="elegant"] .el-ornament::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--el-gold), transparent);
+}
+
+/* ── Section terang di tengah (kontras dengan hero gelap) ───────────── */
+[data-template="elegant"] .el-section-light {
+    background: var(--el-bg-light);
+    color: #1a1008;
+}
+
+[data-template="elegant"] .el-section-light h1,
+[data-template="elegant"] .el-section-light h2,
+[data-template="elegant"] .el-section-light h3 {
+    color: var(--el-gold-dark);
+}
+
+/* ── Full-screen hero photo ─────────────────────────────────────────── */
+[data-template="elegant"] .el-hero {
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+[data-template="elegant"] .el-hero-img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.45);
+}
+
+/* ── Portrait mempelai ──────────────────────────────────────────────── */
+[data-template="elegant"] .el-portrait {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border: 1px solid var(--el-border);
+    box-shadow: var(--el-shadow-gold);
+}
+
+/* ── Card / kotak konten ─────────────────────────────────────────────── */
+[data-template="elegant"] .el-card {
+    background: var(--el-bg-card);
+    border: 1px solid var(--el-border);
+    box-shadow: var(--el-shadow);
+}
+
+/* ── Tombol elegant ─────────────────────────────────────────────────── */
+[data-template="elegant"] .el-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem 3rem;
+    border: 1px solid var(--el-gold);
+    background: transparent;
+    color: var(--el-gold);
+    font-family: var(--el-font-body);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: var(--el-tracking-xl);
+    text-transform: uppercase;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+[data-template="elegant"] .el-btn:hover {
+    background: var(--el-gold);
+    color: var(--el-dark);
+}
+
+/* ── Scrollbar elegant — hitam ───────────────────────────────────────── */
+[data-template="elegant"] ::-webkit-scrollbar {
+    width: 2px;
+}
+
+[data-template="elegant"] ::-webkit-scrollbar-track {
+    background: var(--el-bg);
+}
+
+[data-template="elegant"] ::-webkit-scrollbar-thumb {
+    background: var(--el-gold);
+    border-radius: 9999px;
+}
+
+/* ── Seleksi ────────────────────────────────────────────────────────── */
+[data-template="elegant"] ::selection {
+    background: rgba(212, 175, 112, 0.20);
+    color: var(--el-gold);
+}

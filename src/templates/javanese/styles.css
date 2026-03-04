@@ -1,0 +1,168 @@
+/*
+ * JAVANESE TEMPLATE — styles.css
+ *
+ * CSS khusus untuk template Javanese (tema adat Jawa).
+ * File ini HANYA diimport oleh src/templates/javanese/index.tsx
+ *
+ * Palette:
+ *   Coklat tua, emas, hijau sogan, krem hangat
+ *   Motif batik, ornamen gunungan
+ */
+
+/* ── Color tokens khusus Javanese ──────────────────────────────────── */
+[data-template="javanese"] {
+    --jv-bg: #F5E6CA;
+    /* Krem — background utama */
+    --jv-bg-alt: #EDD9B0;
+    /* Krem gelap — section alt */
+    --jv-bg-dark: #2C1A0E;
+    /* Coklat sangat tua — section hero/footer */
+    --jv-primary: #3E2723;
+    /* Coklat tua */
+    --jv-gold: #C6A75E;
+    /* Emas traditional */
+    --jv-gold-light: #D9BC7A;
+    /* Emas terang — hover/accent */
+    --jv-gold-dark: #A8883E;
+    /* Emas tua */
+    --jv-sogan: #6B4226;
+    /* Coklat sogan khas batik */
+    --jv-hijau: #4A5E3A;
+    /* Hijau sogan */
+    --jv-cream: #FBF4E4;
+    /* Krem terang — card bg */
+    --jv-text: #2C1A0E;
+    /* Teks utama */
+    --jv-text-soft: #7A5C46;
+    /* Teks sekunder */
+    --jv-border: rgba(198, 167, 94, 0.25);
+
+    /* Tipografi */
+    --jv-font-serif: var(--font-serif);
+    /* Playfair — judul */
+    --jv-font-body: var(--font-body);
+    /* Cormorant — teks */
+    --jv-font-script: var(--font-script);
+    /* Pinyon — nama mempelai */
+
+    /* Efek */
+    --jv-shadow: 0 4px 24px rgba(62, 39, 35, 0.15);
+    --jv-shadow-gold: 0 4px 20px rgba(198, 167, 94, 0.30);
+
+    background: var(--jv-bg);
+    color: var(--jv-text);
+    font-family: var(--jv-font-body);
+}
+
+/* ── Heading pakai serif Javanese ──────────────────────────────────── */
+[data-template="javanese"] h1,
+[data-template="javanese"] h2,
+[data-template="javanese"] h3 {
+    font-family: var(--jv-font-serif);
+    color: var(--jv-primary);
+}
+
+/* ── Nama mempelai script ──────────────────────────────────────────── */
+[data-template="javanese"] .jv-names {
+    font-family: var(--jv-font-script);
+    color: var(--jv-gold);
+    line-height: 1.1;
+}
+
+/* ── Section dengan background krem gelap ──────────────────────────── */
+[data-template="javanese"] .jv-section-alt {
+    background: var(--jv-bg-alt);
+}
+
+/* ── Section gelap (hero, footer) ──────────────────────────────────── */
+[data-template="javanese"] .jv-section-dark {
+    background: var(--jv-bg-dark);
+    color: var(--jv-cream);
+}
+
+/* ── Ornamen garis emas ─────────────────────────────────────────────── */
+[data-template="javanese"] .jv-line-gold {
+    width: 6rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--jv-gold), transparent);
+    margin: 1.5rem auto;
+}
+
+/* ── Batik overlay khusus Javanese ──────────────────────────────────── */
+[data-template="javanese"] .jv-batik {
+    background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
+    background-repeat: repeat;
+    opacity: 0.04;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+/* ── Tombol khas Javanese ────────────────────────────────────────────── */
+[data-template="javanese"] .jv-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 2rem;
+    border-radius: 9999px;
+    font-family: var(--jv-font-serif);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--jv-gold);
+    background: transparent;
+    color: var(--jv-gold);
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+[data-template="javanese"] .jv-btn:hover {
+    background: var(--jv-gold);
+    color: var(--jv-primary);
+}
+
+[data-template="javanese"] .jv-btn-filled {
+    background: var(--jv-gold);
+    color: var(--jv-primary);
+}
+
+[data-template="javanese"] .jv-btn-filled:hover {
+    background: var(--jv-gold-light);
+}
+
+/* ── Card / kotak konten ─────────────────────────────────────────────── */
+[data-template="javanese"] .jv-card {
+    background: var(--jv-cream);
+    border: 1px solid var(--jv-border);
+    border-radius: 1rem;
+    box-shadow: var(--jv-shadow);
+}
+
+/* ── Foto portrait mempelai ─────────────────────────────────────────── */
+[data-template="javanese"] .jv-portrait {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    box-shadow: var(--jv-shadow-gold);
+    border: 3px solid rgba(198, 167, 94, 0.3);
+}
+
+/* ── Scrollbar Javanese ──────────────────────────────────────────────── */
+[data-template="javanese"] ::-webkit-scrollbar {
+    width: 4px;
+}
+
+[data-template="javanese"] ::-webkit-scrollbar-track {
+    background: var(--jv-bg);
+}
+
+[data-template="javanese"] ::-webkit-scrollbar-thumb {
+    background: var(--jv-gold);
+    border-radius: 9999px;
+}
+
+/* ── Seleksi teks ────────────────────────────────────────────────────── */
+[data-template="javanese"] ::selection {
+    background: rgba(198, 167, 94, 0.25);
+    color: var(--jv-primary);
+}

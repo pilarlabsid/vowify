@@ -103,6 +103,7 @@ model Wedding {
   resepsiMapUrl   String
 
   gallery         String[]
+  photos          Json     @default("{}")   // { slot_key: url } per template
   qris            String
   themeId         String   @default("javanese")
   isPublished     Boolean  @default(true)

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Playfair_Display, Cormorant_Garamond, Pinyon_Script } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { ThemeScript } from "@/lib/theme-context";
 
 const playfair = Playfair_Display({
   variable: "--font-serif",
@@ -32,8 +33,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" suppressHydrationWarning>
+      <head>
+        <ThemeScript />
+      </head>
       <body
-        className={`${playfair.variable} ${cormorant.variable} ${pinyon.variable} font-body bg-cream text-primary antialiased`}
+        suppressHydrationWarning
+        className={`${playfair.variable} ${cormorant.variable} ${pinyon.variable} font-body antialiased`}
       >
         <Providers>{children}</Providers>
       </body>
