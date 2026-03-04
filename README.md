@@ -20,16 +20,17 @@ _Buat, kelola, dan kirimkan undangan pernikahan digital yang cantik dengan sekal
 
 | Fitur | Deskripsi |
 |---|---|
-| 🎨 **Koleksi Template** | 3 tema premium: Javanese, Minimalist, Elegant Night |
+| 🎨 **Koleksi Template** | Multi-template dengan CSS terisolasi per-tema (Javanese, Minimalist, Elegant, dst) |
 | 👥 **Manajemen Tamu** | Daftar tamu dengan nomor WhatsApp |
 | 📱 **Kirim via WhatsApp** | Satu klik kirim undangan personal ke setiap tamu |
 | 🔗 **Link Personal** | URL dengan nama tamu `?to=Nama+Tamu` |
 | 💬 **RSVP & Ucapan** | Tamu bisa konfirmasi hadir dan kirim doa |
-| 🖼️ **Galeri Foto** | Upload dan tampilkan foto kenangan |
+| 🖼️ **Galeri Foto** | Upload lokal foto + sistem slot per-template |
 | 👁️ **Live Preview** | Preview template dengan data nyata sebelum apply |
 | ✉️ **Verifikasi Email** | OTP 6 digit ke email asli saat registrasi |
 | 🔒 **Autentikasi** | Login aman dengan NextAuth + JWT |
 | 📊 **Dashboard** | Ringkasan statistik undangan, RSVP, ucapan |
+| 🛡️ **Admin Panel** | Kelola semua user, undangan, dan setting platform |
 
 ---
 
@@ -112,94 +113,114 @@ Buka [http://localhost:3000](http://localhost:3000) di browser.
 ## 📂 Struktur Proyek
 
 ```
-nikahyuk/
+vowify/
 ├── prisma/
 │   ├── schema.prisma          # Schema database
-│   ├── migrations/            # Riwayat migrasi
-│   └── seed.ts                # Data awal
+│   └── migrations/            # Riwayat migrasi
 │
 ├── public/
 │   ├── images/
 │   │   └── templates/         # Gambar preview template
-│   └── audio/                 # Musik gamelan (Javanese template)
+│   ├── audio/                 # Musik gamelan (Javanese template)
+│   └── uploads/               # File upload lokal (foto tamu)
 │
 └── src/
     ├── app/
-    │   ├── [slug]/            # Halaman undangan public
+    │   ├── [slug]/            # Halaman undangan publik
+    │   │   ├── layout.tsx     # Zone template (data-zone="template")
+    │   │   └── page.tsx       # Resolver template + graceful fallback
     │   ├── preview/[themeId]/ # Preview template dengan dummy data
-    │   ├── dashboard/         # Seluruh halaman dashboard
+    │   ├── dashboard/         # Seluruh halaman dashboard user
     │   │   ├── weddings/      # Kelola undangan
     │   │   ├── edit/          # Edit konten undangan
     │   │   ├── guests/        # Daftar tamu + kirim WA
     │   │   ├── greetings/     # Ucapan & doa dari tamu
-    │   │   ├── gallery/       # Upload foto galeri
-    │   │   ├── templates/     # Koleksi & ganti template
+    │   │   ├── gallery/       # Upload foto per-slot template
+    │   │   ├── templates/     # Koleksi & ganti template (+ filter kategori)
     │   │   └── settings/      # Pengaturan akun
+    │   ├── admin/             # Panel admin platform
     │   ├── api/
     │   │   ├── auth/          # Register, login, OTP
     │   │   ├── weddings/      # CRUD undangan
     │   │   ├── guests/        # CRUD daftar tamu
-    │   │   └── greetings/     # CRUD ucapan tamu
+    │   │   ├── greetings/     # CRUD ucapan tamu
+    │   │   ├── upload/        # Upload file ke storage lokal
+    │   │   ├── storage/       # Info storage usage
+    │   │   └── admin/         # Admin: user, wedding, settings, export
     │   ├── login/             # Halaman login
     │   └── register/          # Halaman register (3 langkah)
     │
     ├── lib/
-    │   ├── templates.ts       # ⭐ Template Registry (central config)
+    │   ├── prisma.ts          # Prisma client singleton
     │   ├── auth.ts            # Konfigurasi NextAuth
-    │   ├── prisma.ts          # Prisma client
     │   ├── email.ts           # Nodemailer + template email OTP
-    │   ├── types.ts           # TypeScript types
+    │   ├── storage.ts         # File storage utilities
+    │   ├── types.ts           # TypeScript types (WeddingData, dll)
     │   └── dummy-data.ts      # Data dummy untuk preview template
     │
-    ├── templates/             # Komponen template undangan
-    │   ├── javanese/          # Tema tradisional Jawa
-    │   ├── minimalist/        # Tema minimalis putih
-    │   └── elegant/           # Tema gelap + emas
+    ├── templates/             # ⭐ Semua template undangan
+    │   ├── _types.ts          # Tipe TemplateConfig, PhotoSlot, category, dll
+    │   ├── _slots.ts          # Canonical photo slots (dishare lintas template)
+    │   ├── registry.ts        # Agregator — kumpulkan semua kategori
+    │   ├── tradisional/
+    │   │   ├── _index.ts      # ✏️ Daftar template tradisional
+    │   │   └── javanese/      # Template Javanese
+    │   ├── modern/
+    │   │   ├── _index.ts      # ✏️ Daftar template modern
+    │   │   ├── minimalist/    # Template Minimalist
+    │   │   └── elegant/       # Template Elegant Night
+    │   └── README.md          # Panduan lengkap tambah template
     │
     └── services/
-        └── wedding.ts         # Data access layer
+        └── wedding.ts         # Data access layer (query DB)
 ```
 
 ---
 
 ## 🎨 Menambah Template Baru
 
-Sistem template menggunakan **Registry Pattern** — hanya perlu edit **1 file** setelah membuat komponen:
+Sistem template menggunakan **Category Registry Pattern** — scalable untuk 100+ template.
+Setiap template memiliki CSS-nya sendiri yang terisolasi.
 
-### Langkah 1 — Buat Komponen
+### Langkah 1 — Buat Folder Template
 
 ```
-src/templates/nama-baru/index.tsx
+src/templates/[kategori]/[nama]/
+├── index.tsx    ← komponen (wajib)
+└── styles.css   ← CSS khusus template (wajib)
 ```
 
 ```tsx
-import { WeddingData } from "@/lib/types";
+// index.tsx
+import { TemplateProps } from '@/templates/_types';
+import './styles.css';
 
-interface Props {
-    data: WeddingData;
-    guestName?: string;
-}
-
-export default function NamaBaru({ data, guestName }: Props) {
-    return <main>{/* desain Anda */}</main>;
+export default function NamaTemplate({ data, guestName }: TemplateProps) {
+    return (
+        <main data-template="nama-template">
+            {/* desain Anda */}
+        </main>
+    );
 }
 ```
 
-### Langkah 2 — Daftar di Registry
+### Langkah 2 — Daftar di `_index.ts` Kategori
 
-Buka `src/lib/templates.ts` dan tambahkan:
+Buka `src/templates/[kategori]/_index.ts` dan tambahkan:
 
 ```ts
-import NamaBaru from '@/templates/nama-baru';
-
-// Tambahkan ke array TEMPLATES:
 {
     id: 'nama-baru',
     name: 'Nama Template',
     description: 'Deskripsi singkat...',
     previewImage: '/images/templates/nama-baru.png',
     features: ['Fitur 1', 'Fitur 2'],
-    component: NamaBaru,
+    category: 'modern',           // kategori template
+    status: 'active',             // 'active' | 'draft' | 'deprecated'
+    tier: 'free',                 // 'free' | 'premium' | 'enterprise'
+    tags: ['tag1', 'tag2'],
+    loader: () => import('@/templates/modern/nama-baru'),
+    photoSlots: [SLOT_BRIDE_PORTRAIT, SLOT_GROOM_PORTRAIT],
 },
 ```
 
@@ -235,6 +256,23 @@ import NamaBaru from '@/templates/nama-baru';
 | `PATCH` | `/api/guests/[id]` | Tandai undangan terkirim |
 | `DELETE` | `/api/guests/[id]` | Hapus tamu |
 | `GET` | `/api/greetings?weddingId=` | Ucapan dari tamu |
+
+### Upload & Storage
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `POST` | `/api/upload` | Upload foto ke storage lokal |
+| `GET` | `/api/storage/info` | Info penggunaan storage |
+
+### Admin
+| Method | Endpoint | Deskripsi |
+|---|---|---|
+| `GET` | `/api/admin/users` | Daftar semua user |
+| `PATCH` | `/api/admin/users/[id]` | Block/unblock user |
+| `GET` | `/api/admin/weddings` | Daftar semua undangan |
+| `GET` | `/api/admin/stats` | Statistik platform |
+| `GET` | `/api/admin/export/users` | Export data user (CSV) |
+| `GET` | `/api/admin/export/weddings` | Export data undangan (CSV) |
+| `GET/PUT` | `/api/admin/settings` | Pengaturan global platform |
 
 ---
 
@@ -299,7 +337,7 @@ npm run start
 Gunakan **Nginx** sebagai reverse proxy dan **PM2** untuk process manager:
 
 ```bash
-pm2 start npm --name "nikahyuk" -- start
+pm2 start npm --name "vowify" -- start
 pm2 save
 ```
 
