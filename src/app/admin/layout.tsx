@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import {
     LayoutDashboard, Users, Heart, LogOut,
-    Menu, X, Shield, Loader2, Settings
+    Menu, X, Shield, Loader2, Settings, Palette
 } from 'lucide-react';
 import Link from 'next/link';
 import { signOut, useSession } from 'next-auth/react';
@@ -82,6 +82,7 @@ function AdminSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
                 <SidebarItem icon={<LayoutDashboard className="w-5 h-5" />} label="Dashboard Admin" href="/admin" />
                 <SidebarItem icon={<Users className="w-5 h-5" />} label="Manajemen User" href="/admin/users" />
                 <SidebarItem icon={<Heart className="w-5 h-5" />} label="Semua Undangan" href="/admin/weddings" />
+                <SidebarItem icon={<Palette className="w-5 h-5" />} label="Manajemen Template" href="/admin/templates" />
                 <SidebarItem icon={<Settings className="w-5 h-5" />} label="Pengaturan" href="/admin/settings" />
             </nav>
 
@@ -104,6 +105,8 @@ function AdminHeader({ setIsSidebarOpen }: any) {
         if (pathname === '/admin') return 'Dashboard Admin';
         if (pathname === '/admin/users') return 'Manajemen User';
         if (pathname === '/admin/weddings') return 'Daftar Undangan';
+        if (pathname === '/admin/templates') return 'Manajemen Template';
+        if (pathname === '/admin/settings') return 'Pengaturan';
         return 'Admin Panel';
     };
 

@@ -2,11 +2,27 @@
 
 import Image from 'next/image';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Check, Palette, Eye, Play, Search } from 'lucide-react';
+import { Check, Palette, Eye, Play, Search, RefreshCw } from 'lucide-react';
 import { useDashboard } from '../dashboard-context';
 import Link from 'next/link';
-import { useState, useMemo } from 'react';
-import { ACTIVE_TEMPLATES, TemplateCategory } from '@/templates/registry';
+import { useState, useMemo, useEffect } from 'react';
+import { ACTIVE_TEMPLATES } from '@/templates/registry'; // fallback only
+
+// Tipe metadata yang dikirim API /api/templates
+type TemplateMeta = {
+    id: string;
+    name: string;
+    description: string;
+    previewImage: string;
+    features: string[];
+    badge?: string;
+    category: string;
+    tier: string;
+    tags: string[];
+    isVisible: boolean;
+    sortOrder: number;
+};
+
 
 // Label tampilan untuk tiap kategori
 const CATEGORY_LABELS: Record<string, string> = {
@@ -20,8 +36,7 @@ const CATEGORY_LABELS: Record<string, string> = {
     other: 'Lainnya',
 };
 
-// Hitung berapa template per kategori (hanya yang punya template aktif)
-function buildCategoryTabs(templates: typeof ACTIVE_TEMPLATES) {
+function buildCategoryTabs(templates: TemplateMeta[]) {
     const counts: Record<string, number> = { all: templates.length };
     for (const t of templates) {
         counts[t.category] = (counts[t.category] ?? 0) + 1;
@@ -31,18 +46,48 @@ function buildCategoryTabs(templates: typeof ACTIVE_TEMPLATES) {
         .map(([cat, count]) => ({ cat, count }));
 }
 
+function SkeletonCard() {
+    return (
+        <div className="rounded-2xl overflow-hidden animate-pulse"
+            style={{ background: 'var(--ui-bg-card)', border: '1px solid var(--ui-border)' }}>
+            <div className="aspect-[2/3]" style={{ background: 'var(--ui-bg-hover)' }} />
+            <div className="p-3 space-y-2">
+                <div className="h-3 rounded w-3/4" style={{ background: 'var(--ui-bg-hover)' }} />
+                <div className="h-2 rounded w-full" style={{ background: 'var(--ui-bg-hover)' }} />
+                <div className="h-8 rounded-xl w-full mt-2" style={{ background: 'var(--ui-bg-hover)' }} />
+            </div>
+        </div>
+    );
+}
+
 export default function TemplatesPage() {
     const { selectedWedding, setSelectedWedding } = useDashboard();
     const [activeCategory, setActiveCategory] = useState<string>('all');
     const [search, setSearch] = useState('');
+    const [templates, setTemplates] = useState<TemplateMeta[]>([]);
+    const [loadingTemplates, setLoadingTemplates] = useState(true);
 
-    const tabs = useMemo(() => buildCategoryTabs(ACTIVE_TEMPLATES), []);
+    useEffect(() => {
+        fetch('/api/templates')
+            .then(r => r.json())
+            .then(setTemplates)
+            .catch(() => {
+                setTemplates(ACTIVE_TEMPLATES.map(t => ({
+                    id: t.id, name: t.name, description: t.description,
+                    previewImage: t.previewImage, features: t.features,
+                    badge: t.badge, category: t.category,
+                    tier: t.tier, tags: t.tags ?? [],
+                    isVisible: true, sortOrder: 0,
+                })));
+            })
+            .finally(() => setLoadingTemplates(false));
+    }, []);
+
+    const tabs = useMemo(() => buildCategoryTabs(templates), [templates]);
 
     const filtered = useMemo(() => {
-        let list = ACTIVE_TEMPLATES;
-        if (activeCategory !== 'all') {
-            list = list.filter(t => t.category === activeCategory);
-        }
+        let list = templates;
+        if (activeCategory !== 'all') list = list.filter(t => t.category === activeCategory);
         if (search.trim()) {
             const q = search.toLowerCase();
             list = list.filter(t =>
@@ -52,7 +97,7 @@ export default function TemplatesPage() {
             );
         }
         return list;
-    }, [activeCategory, search]);
+    }, [templates, activeCategory, search]);
 
     const handleSelectTemplate = async (templateId: string) => {
         if (!selectedWedding) return;
@@ -77,7 +122,7 @@ export default function TemplatesPage() {
                 <div>
                     <h2 className="text-xl font-bold" style={{ color: 'var(--ui-text-primary)' }}>Koleksi Template</h2>
                     <p className="text-sm mt-0.5" style={{ color: 'var(--ui-text-secondary)' }}>
-                        {ACTIVE_TEMPLATES.length} template tersedia — pilih desain impian pernikahan Anda.
+                        {loadingTemplates ? 'Memuat template...' : `${templates.length} template tersedia — pilih desain impian pernikahan Anda.`}
                     </p>
                 </div>
                 {selectedWedding && (

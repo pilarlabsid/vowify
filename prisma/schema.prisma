@@ -165,3 +165,33 @@ model Setting {
   value     String
   updatedAt DateTime @updatedAt
 }
+
+// ─── Template Metadata ────────────────────────────────────────────────────────
+//
+// Menyimpan override metadata untuk template yang terdaftar di kode.
+// Null = gunakan nilai default dari kode (_index.ts).
+// Admin bisa ubah status, tier, nama, deskripsi tanpa deploy ulang.
+
+model TemplateMetadata {
+  id           String   @id       // harus cocok dengan id di registry kode
+
+  // Override metadata — null = gunakan nilai dari kode
+  name         String?
+  description  String?
+  badge        String?
+  category     String?
+  status       String?            // 'active' | 'draft' | 'deprecated'
+  tier         String?            // 'free' | 'premium' | 'enterprise'
+  previewImage String?
+  features     String[]           // kosong = gunakan dari kode
+  tags         String[]           // kosong = gunakan dari kode
+
+  // Kontrol admin
+  isVisible    Boolean  @default(true)   // sembunyikan dari user tanpa ubah status
+  sortOrder    Int      @default(0)      // urutan tampil di dashboard (ascending)
+
+  syncedAt     DateTime?                 // terakhir disinkron dari kode
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+

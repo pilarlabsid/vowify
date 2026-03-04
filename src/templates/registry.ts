@@ -39,7 +39,7 @@ export type {
 // ── Import tipe untuk digunakan di dalam file ini ─────────────────
 // (export type di atas hanya mengekspor ke luar — TypeScript memerlukan
 //  import terpisah agar tipe tersedia secara lokal)
-import type { TemplateConfig, TemplateProps, PhotoSlot } from './_types';
+import type { TemplateConfig, TemplateProps, PhotoSlot, TemplateCategory, TemplateStatus, TemplateTier } from './_types';
 
 // ── Import dari tiap kategori ──────────────────────────────────────
 import { TRADISIONAL_TEMPLATES } from './tradisional/_index';
@@ -56,12 +56,66 @@ export const TEMPLATES: TemplateConfig[] = [
     // ...FLORAL_TEMPLATES,
 ];
 
-/** Hanya template yang statusnya 'active' — untuk ditampilkan di dashboard */
+/** Hanya template yang statusnya 'active' — untuk ditampilkan di dashboard (fallback tanpa DB) */
 export const ACTIVE_TEMPLATES = TEMPLATES.filter(t => t.status === 'active');
 
 /** Template berdasarkan tier */
 export const FREE_TEMPLATES = TEMPLATES.filter(t => t.tier === 'free');
 export const PREMIUM_TEMPLATES = TEMPLATES.filter(t => t.tier === 'premium');
+
+// ─────────────────────────────────────────────────────────────────────
+// DB MERGE — Template config yang sudah di-override dari database
+// ─────────────────────────────────────────────────────────────────────
+
+/** Config template setelah digabung dengan override dari DB */
+export type MergedTemplateConfig = TemplateConfig & {
+    isVisible: boolean;
+    sortOrder: number;
+};
+
+/**
+ * Gabungkan template dari kode dengan override dari DB.
+ * DB menang atas kode jika nilai-nya non-null / non-empty.
+ * Digunakan oleh API routes — JANGAN dipanggil langsung di client component.
+ *
+ * @param dbRecord  Row dari tabel TemplateMetadata (atau null jika belum sync)
+ * @param codeTemplate  Entri dari TEMPLATES array
+ */
+export function mergeWithDB(
+    codeTemplate: TemplateConfig,
+    dbRecord: {
+        name: string | null;
+        description: string | null;
+        badge: string | null;
+        category: string | null;
+        status: string | null;
+        tier: string | null;
+        previewImage: string | null;
+        features: string[];
+        tags: string[];
+        isVisible: boolean;
+        sortOrder: number;
+    } | null,
+): MergedTemplateConfig {
+    if (!dbRecord) {
+        return { ...codeTemplate, isVisible: true, sortOrder: 0 };
+    }
+    return {
+        ...codeTemplate,
+        name: dbRecord.name ?? codeTemplate.name,
+        description: dbRecord.description ?? codeTemplate.description,
+        badge: dbRecord.badge ?? codeTemplate.badge,
+        category: (dbRecord.category ?? codeTemplate.category) as TemplateCategory,
+        status: (dbRecord.status ?? codeTemplate.status) as TemplateStatus,
+        tier: (dbRecord.tier ?? codeTemplate.tier) as TemplateTier,
+        previewImage: dbRecord.previewImage ?? codeTemplate.previewImage,
+        features: dbRecord.features.length > 0 ? dbRecord.features : codeTemplate.features,
+        tags: dbRecord.tags.length > 0 ? dbRecord.tags : (codeTemplate.tags ?? []),
+        isVisible: dbRecord.isVisible,
+        sortOrder: dbRecord.sortOrder,
+    };
+}
+
 
 // ─────────────────────────────────────────────────────────────────────
 // HELPER FUNCTIONS
