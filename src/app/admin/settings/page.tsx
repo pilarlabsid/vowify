@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-    Settings, MessageCircle, Users, Megaphone, Wrench,
+    MessageCircle, Users, Megaphone, Wrench,
     Loader2, Check, Save, Eye, RotateCcw, AlertTriangle
 } from 'lucide-react';
 
@@ -117,16 +117,7 @@ export default function AdminSettingsPage() {
     }
 
     return (
-        <div className="space-y-6 max-w-3xl">
-            <div>
-                <h1 className="text-2xl font-bold flex items-center gap-3" style={{ color: 'var(--ui-text-primary)' }}>
-                    <Settings className="w-7 h-7 text-gold" />
-                    Pengaturan Aplikasi
-                </h1>
-                <p className="text-sm mt-1" style={{ color: 'var(--ui-text-secondary)' }}>
-                    Konfigurasi global yang berlaku untuk semua pengguna.
-                </p>
-            </div>
+        <div className="space-y-5 max-w-3xl">
 
             {/* 1. Maintenance Mode */}
             <Section title="Mode Maintenance" icon={<Wrench className="w-5 h-5 text-red-500" />}>
