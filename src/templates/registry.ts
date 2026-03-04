@@ -10,8 +10,8 @@
  *  ⚠️  JANGAN tambah template langsung di file ini.
  *
  *  Cara tambah template baru:
- *  1. Buat src/templates/[nama]/index.tsx  → komponen (props: TemplateProps)
- *  2. Buat src/templates/[nama]/styles.css → CSS token khusus template
+ *  1. Buat src/templates/[kategori]/[nama]/index.tsx  → komponen (props: TemplateProps)
+ *  2. Buat src/templates/[kategori]/[nama]/styles.css → CSS token khusus template
  *  3. Edit src/templates/[kategori]/_index.ts → tambah entry ke array
  *  4. Selesai — tidak ada file lain yang perlu disentuh
  *
@@ -35,6 +35,12 @@ export type {
     TemplateTier,
 } from './_types';
 
+
+// ── Import tipe untuk digunakan di dalam file ini ─────────────────
+// (export type di atas hanya mengekspor ke luar — TypeScript memerlukan
+//  import terpisah agar tipe tersedia secara lokal)
+import type { TemplateConfig, TemplateProps, PhotoSlot } from './_types';
+
 // ── Import dari tiap kategori ──────────────────────────────────────
 import { TRADISIONAL_TEMPLATES } from './tradisional/_index';
 import { MODERN_TEMPLATES } from './modern/_index';
@@ -42,8 +48,6 @@ import { MODERN_TEMPLATES } from './modern/_index';
 // import { FLORAL_TEMPLATES } from './floral/_index';
 // import { RUSTIC_TEMPLATES } from './rustic/_index';
 // import { ISLAMIC_TEMPLATES } from './islamic/_index';
-
-import type { TemplateConfig, TemplateProps, PhotoSlot } from './_types';
 
 // ── Gabungan semua template ────────────────────────────────────────
 export const TEMPLATES: TemplateConfig[] = [

@@ -48,7 +48,7 @@ export default function TemplatesPage() {
             list = list.filter(t =>
                 t.name.toLowerCase().includes(q) ||
                 t.description.toLowerCase().includes(q) ||
-                t.tags?.some(tag => tag.includes(q))
+                t.tags?.some((tag: string) => tag.includes(q))
             );
         }
         return list;
@@ -177,7 +177,7 @@ export default function TemplatesPage() {
                                 {/* Hover overlay */}
                                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-3">
                                     <div className="flex flex-wrap gap-1">
-                                        {template.features.slice(0, 3).map(f => (
+                                        {template.features.slice(0, 3).map((f: string) => (
                                             <span key={f} className="text-[9px] bg-white/20 backdrop-blur-md text-white px-1.5 py-0.5 rounded-full border border-white/20">
                                                 {f}
                                             </span>
