@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-    RefreshCw, Eye, EyeOff, Star, Pencil, RotateCcw,
-    CheckCircle, XCircle, Clock, ChevronDown, ChevronUp,
+    RefreshCw, Eye, EyeOff, Pencil, RotateCcw,
+    CheckCircle, XCircle, ChevronDown, ChevronUp,
     Database, Code, Loader2,
 } from 'lucide-react';
 
@@ -195,38 +195,47 @@ export default function AdminTemplatesPage() {
     const unsyncedCount = templates.filter(t => !t.isSynced).length;
 
     return (
-        <div className="space-y-6 p-6">
-            {/* Header */}
-            <div className="flex items-start justify-between gap-4">
-                <div>
-                    <h1 className="text-2xl font-bold" style={{ color: 'var(--ui-text-primary)' }}>
-                        Manajemen Template
-                    </h1>
-                    <p className="text-sm mt-1" style={{ color: 'var(--ui-text-secondary)' }}>
-                        Kelola metadata template tanpa deploy ulang. Perubahan langsung aktif.
-                    </p>
+        <div className="space-y-5">
+            {/* Toolbar — stats + sync badge */}
+            <div className="flex items-center justify-between gap-4">
+                {/* Stats pills */}
+                <div className="flex items-center gap-2 flex-wrap">
+                    {[
+                        { label: 'Total', value: templates.length, color: 'var(--ui-text-primary)' },
+                        { label: 'Aktif', value: templates.filter(t => t.status === 'active').length, color: '#34d399' },
+                        { label: 'Terlihat', value: templates.filter(t => t.isVisible).length, color: '#60a5fa' },
+                        { label: 'Tersinkron', value: templates.filter(t => t.isSynced).length, color: '#a78bfa' },
+                    ].map(s => (
+                        <div key={s.label} className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
+                            style={{ background: 'var(--ui-bg-card)', border: '1px solid var(--ui-border)', boxShadow: 'var(--ui-shadow)' }}>
+                            <span className="font-bold text-sm" style={{ color: s.color }}>{s.value}</span>
+                            <span style={{ color: 'var(--ui-text-muted)' }}>{s.label}</span>
+                        </div>
+                    ))}
                 </div>
 
-                {/* Tombol sync hanya muncul kalau ada template baru belum tersinkron */}
-                {unsyncedCount > 0 ? (
-                    <button
-                        onClick={handleSync}
-                        disabled={syncing}
-                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                        style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' }}
-                    >
-                        {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                        Sync {unsyncedCount} Template Baru
+                {/* Sync button atau badge */}
+                {syncing ? (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs"
+                        style={{ color: 'var(--ui-text-muted)' }}>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Menyinkron...
+                    </div>
+                ) : unsyncedCount > 0 ? (
+                    <button onClick={handleSync}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all border"
+                        style={{ background: 'rgba(245,158,11,0.08)', color: '#fbbf24', borderColor: 'rgba(245,158,11,0.25)', boxShadow: 'var(--ui-shadow)' }}>
+                        <RefreshCw className="w-3.5 h-3.5" />
+                        Sync {unsyncedCount} Baru
                     </button>
                 ) : !loading && (
                     <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
-                        style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+                        style={{ background: 'var(--ui-bg-card)', border: '1px solid var(--ui-border)', color: '#34d399', boxShadow: 'var(--ui-shadow)' }}>
                         <CheckCircle className="w-3.5 h-3.5" />
-                        Semua template tersinkron
+                        Semua tersinkron
                     </div>
                 )}
             </div>
-
 
             {/* Alert message */}
             {message && (
@@ -241,34 +250,9 @@ export default function AdminTemplatesPage() {
                 </div>
             )}
 
-            {/* Sync warning */}
-            {unsyncedCount > 0 && (
-                <div className="flex items-center gap-2 px-4 py-3 rounded-xl text-sm"
-                    style={{ background: 'rgba(245,158,11,0.1)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.2)' }}>
-                    <Clock className="w-4 h-4 shrink-0" />
-                    <span>
-                        <strong>{unsyncedCount} template</strong> belum tersinkron ke database.
-                        Klik <strong>Sync dari Kode</strong> untuk membuat record-nya.
-                    </span>
-                </div>
-            )}
-
-            {/* Stats */}
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                    { label: 'Total Template', value: templates.length, color: '#C6A75E' },
-                    { label: 'Aktif', value: templates.filter(t => t.status === 'active').length, color: '#34d399' },
-                    { label: 'Terlihat User', value: templates.filter(t => t.isVisible).length, color: '#60a5fa' },
-                    { label: 'Tersinkron', value: templates.filter(t => t.isSynced).length, color: '#a78bfa' },
-                ].map(s => (
-                    <div key={s.label} className="rounded-xl p-4" style={{ background: 'var(--ui-bg-card)', border: '1px solid var(--ui-border)' }}>
-                        <p className="text-2xl font-bold" style={{ color: s.color }}>{s.value}</p>
-                        <p className="text-xs mt-0.5" style={{ color: 'var(--ui-text-muted)' }}>{s.label}</p>
-                    </div>
-                ))}
-            </div>
 
             {/* Template list */}
+
             {loading ? (
                 <div className="flex items-center justify-center py-16">
                     <Loader2 className="w-6 h-6 animate-spin" style={{ color: '#C6A75E' }} />
