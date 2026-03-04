@@ -66,20 +66,22 @@ export default function TemplatesPage() {
     const [search, setSearch] = useState('');
     const [templates, setTemplates] = useState<TemplateMeta[]>([]);
     const [loadingTemplates, setLoadingTemplates] = useState(true);
+    const [dbMeta, setDbMeta] = useState<{ synced: number; available: number } | null>(null);
 
     useEffect(() => {
         fetch('/api/templates')
             .then(r => r.json())
-            .then(setTemplates)
-            .catch(() => {
-                setTemplates(ACTIVE_TEMPLATES.map(t => ({
-                    id: t.id, name: t.name, description: t.description,
-                    previewImage: t.previewImage, features: t.features,
-                    badge: t.badge, category: t.category,
-                    tier: t.tier, tags: t.tags ?? [],
-                    isVisible: true, sortOrder: 0,
-                })));
+            .then(data => {
+                // API sekarang mengembalikan { templates, synced, available }
+                if (data && Array.isArray(data.templates)) {
+                    setTemplates(data.templates);
+                    setDbMeta({ synced: data.synced, available: data.available });
+                } else {
+                    // Handle respons lama (array langsung) — fallback sementara
+                    setTemplates(Array.isArray(data) ? data : []);
+                }
             })
+            .catch(() => setTemplates([]))
             .finally(() => setLoadingTemplates(false));
     }, []);
 
@@ -122,7 +124,12 @@ export default function TemplatesPage() {
                 <div>
                     <h2 className="text-xl font-bold" style={{ color: 'var(--ui-text-primary)' }}>Koleksi Template</h2>
                     <p className="text-sm mt-0.5" style={{ color: 'var(--ui-text-secondary)' }}>
-                        {loadingTemplates ? 'Memuat template...' : `${templates.length} template tersedia — pilih desain impian pernikahan Anda.`}
+                        {loadingTemplates
+                            ? 'Memuat template dari database...'
+                            : dbMeta && dbMeta.synced === 0
+                                ? 'Belum ada template aktif — hubungi admin.'
+                                : `${templates.length} template tersedia`
+                        }
                     </p>
                 </div>
                 {selectedWedding && (
@@ -178,13 +185,32 @@ export default function TemplatesPage() {
                 </div>
             </div>
 
-            {/* Hasil pencarian kosong */}
-            {filtered.length === 0 && (
+            {/* Empty state */}
+            {!loadingTemplates && filtered.length === 0 && (
                 <div className="py-16 text-center" style={{ color: 'var(--ui-text-muted)' }}>
-                    <p className="text-sm">Tidak ada template ditemukan untuk "{search}"</p>
-                    <button onClick={() => { setSearch(''); setActiveCategory('all'); }} className="mt-2 text-xs underline">
-                        Reset filter
-                    </button>
+                    {templates.length === 0 ? (
+                        // Tidak ada template di DB sama sekali
+                        <>
+                            <p className="text-sm font-medium" style={{ color: 'var(--ui-text-primary)' }}>Belum ada template tersedia</p>
+                            <p className="text-xs mt-1">
+                                {dbMeta && dbMeta.available > 0
+                                    ? `${dbMeta.available} template ada di sistem, tapi belum disinkron ke database.`
+                                    : 'Admin belum menambahkan template.'}
+                            </p>
+                            {dbMeta && dbMeta.available > 0 && (
+                                <p className="text-xs mt-1">Hubungi admin untuk melakukan sinkronisasi template.</p>
+                            )}
+                        </>
+                    ) : (
+                        // Ada template tapi filter tidak menemukan
+                        <>
+                            <p className="text-sm">Tidak ada template untuk filter ini</p>
+                            <button onClick={() => { setSearch(''); setActiveCategory('all'); }}
+                                className="mt-2 text-xs underline">
+                                Reset filter
+                            </button>
+                        </>
+                    )}
                 </div>
             )}
 
