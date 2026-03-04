@@ -50,6 +50,7 @@ export default function AdminTemplatesPage() {
     const [templates, setTemplates] = useState<TemplateAdminItem[]>([]);
     const [loading, setLoading] = useState(true);
     const [syncing, setSyncing] = useState(false);
+    const [autoSynced, setAutoSynced] = useState(false);
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editForm, setEditForm] = useState<Partial<TemplateAdminItem>>({});
     const [saving, setSaving] = useState(false);
@@ -62,18 +63,42 @@ export default function AdminTemplatesPage() {
             const res = await fetch('/api/admin/templates');
             const data = await res.json();
             setTemplates(data);
+            return data as TemplateAdminItem[];
         } catch {
             showMessage('err', 'Gagal memuat daftar template.');
+            return [];
         } finally {
             setLoading(false);
         }
     }, []);
 
-    useEffect(() => { fetchTemplates(); }, [fetchTemplates]);
+    // Auto-sync saat pertama load — jika ada template belum tersinkron
+    useEffect(() => {
+        fetchTemplates().then(async (data) => {
+            const hasUnsynced = data.some((t: TemplateAdminItem) => !t.isSynced);
+            if (hasUnsynced && !autoSynced) {
+                setSyncing(true);
+                try {
+                    const res = await fetch('/api/admin/templates', { method: 'POST' });
+                    const result = await res.json();
+                    if (result.created > 0) {
+                        showMessage('ok', `Auto-sync: ${result.created} template baru ditambahkan ke database.`);
+                        fetchTemplates();
+                    }
+                    setAutoSynced(true);
+                } catch {
+                    // Gagal auto-sync, biarkan admin manual
+                } finally {
+                    setSyncing(false);
+                }
+            }
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     function showMessage(type: 'ok' | 'err', text: string) {
         setMessage({ type, text });
-        setTimeout(() => setMessage(null), 4000);
+        setTimeout(() => setMessage(null), 5000);
     }
 
     async function handleSync() {
@@ -89,6 +114,7 @@ export default function AdminTemplatesPage() {
             setSyncing(false);
         }
     }
+
 
     function startEdit(tpl: TemplateAdminItem) {
         setEditingId(tpl.id);
@@ -180,16 +206,27 @@ export default function AdminTemplatesPage() {
                         Kelola metadata template tanpa deploy ulang. Perubahan langsung aktif.
                     </p>
                 </div>
-                <button
-                    onClick={handleSync}
-                    disabled={syncing}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
-                    style={{ background: 'rgba(201,169,94,0.15)', color: '#C6A75E', border: '1px solid rgba(201,169,94,0.3)' }}
-                >
-                    {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
-                    Sync dari Kode
-                </button>
+
+                {/* Tombol sync hanya muncul kalau ada template baru belum tersinkron */}
+                {unsyncedCount > 0 ? (
+                    <button
+                        onClick={handleSync}
+                        disabled={syncing}
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold transition-all"
+                        style={{ background: 'rgba(245,158,11,0.15)', color: '#fbbf24', border: '1px solid rgba(245,158,11,0.3)' }}
+                    >
+                        {syncing ? <Loader2 className="w-4 h-4 animate-spin" /> : <RefreshCw className="w-4 h-4" />}
+                        Sync {unsyncedCount} Template Baru
+                    </button>
+                ) : !loading && (
+                    <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-medium"
+                        style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+                        <CheckCircle className="w-3.5 h-3.5" />
+                        Semua template tersinkron
+                    </div>
+                )}
             </div>
+
 
             {/* Alert message */}
             {message && (
