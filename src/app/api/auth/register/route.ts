@@ -35,32 +35,54 @@ export async function POST(req: NextRequest) {
         });
 
         // Invalidate old OTPs for this email
-        await (prisma as any).emailOtp.updateMany({
-            where: { email: emailLower, used: false },
-            data: { used: true },
-        });
+        try {
+            await prisma.emailOtp.updateMany({
+                where: { email: emailLower, used: false },
+                data: { used: true },
+            });
+        } catch (otpErr) {
+            console.error('[Register] Failed to invalidate old OTPs:', otpErr);
+            // Non-critical, continue
+        }
 
         // Generate new OTP
         const otp = generateOtp();
         const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-        await (prisma as any).emailOtp.create({
-            data: { email: emailLower, otp, expiresAt },
-        });
+        try {
+            await prisma.emailOtp.create({
+                data: { email: emailLower, otp, expiresAt },
+            });
+        } catch (otpCreateErr) {
+            console.error('[Register] Failed to create OTP record:', otpCreateErr);
+            throw new Error('Gagal membuat kode verifikasi. Silakan coba lagi.');
+        }
 
         // Send email
-        await sendOtpEmail(emailLower, otp, name);
+        try {
+            await sendOtpEmail(emailLower, otp, name);
+        } catch (emailErr: any) {
+            console.error('[Register] Failed to send OTP email:', emailErr);
+            // Handle specific SMTP errors
+            if (emailErr?.code === 'EAUTH' || emailErr?.responseCode === 535) {
+                throw new Error('AUTH_EMAIL_ERROR');
+            }
+            throw new Error('Gagal mengirim email verifikasi. Coba lagi.');
+        }
 
         return NextResponse.json(
             { success: true, message: 'Kode OTP telah dikirim ke email Anda.' },
             { status: 200 }
         );
     } catch (err: any) {
-        console.error('[POST /api/auth/register]', err);
-        // Detect SMTP errors specifically
-        if (err?.code === 'EAUTH' || err?.responseCode === 535) {
+        console.error('[POST /api/auth/register] Global Error:', err);
+        
+        const message = err.message || 'Terjadi kesalahan. Coba lagi.';
+        
+        if (message === 'AUTH_EMAIL_ERROR') {
             return NextResponse.json({ error: 'Konfigurasi email server bermasalah. Hubungi admin.' }, { status: 500 });
         }
-        return NextResponse.json({ error: 'Terjadi kesalahan. Coba lagi.' }, { status: 500 });
+        
+        return NextResponse.json({ error: message }, { status: 500 });
     }
 }

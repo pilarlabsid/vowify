@@ -108,7 +108,7 @@ model Wedding {
   themeId         String   @default("javanese")
   isPublished     Boolean  @default(true)
 
-  user         User?          @relation(fields: [userId], references: [id])
+  user         User?          @relation(fields: [userId], references: [id], onDelete: Cascade)
   timeline     TimelineItem[]
   bankAccounts BankAccount[]
   greetings    Greeting[]

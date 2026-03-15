@@ -13,15 +13,20 @@ export async function GET(req: NextRequest) {
 
         const { searchParams } = new URL(req.url);
         const search = searchParams.get('search') || '';
+        const role = searchParams.get('role');
         const page = parseInt(searchParams.get('page') || '1');
         const limit = 20;
 
-        const where = search ? {
-            OR: [
+        let where: any = {};
+        if (search) {
+            where.OR = [
                 { name: { contains: search, mode: 'insensitive' as const } },
                 { email: { contains: search, mode: 'insensitive' as const } },
-            ],
-        } : {};
+            ];
+        }
+        if (role && role !== 'all') {
+            where.role = role;
+        }
 
         const [users, total] = await Promise.all([
             (prisma as any).user.findMany({

@@ -6,6 +6,22 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useDashboard } from '../dashboard-context';
 import { EmptyState, WeddingCard, FormGrid, FormField, TemplateSelector } from '../components';
 
+// Utility: buat slug dari nama mempelai
+function generateSlug(bride: string, groom: string): string {
+    const toSlug = (s: string) =>
+        s.toLowerCase()
+            .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // hapus diakritik
+            .replace(/[^a-z0-9\s-]/g, '')
+            .trim()
+            .replace(/\s+/g, '-');
+    const b = toSlug(bride);
+    const g = toSlug(groom);
+    if (!b && !g) return '';
+    if (!b) return g;
+    if (!g) return b;
+    return `${b}-${g}`;
+}
+
 function CreateWeddingForm({ onSuccess }: { onSuccess: () => void }) {
     const [form, setForm] = useState({
         slug: '', brideName: '', brideShort: '', brideParents: '',
@@ -13,10 +29,24 @@ function CreateWeddingForm({ onSuccess }: { onSuccess: () => void }) {
         date: '', akadTime: '', akadLocation: '', akadAddress: '',
         resepsiTime: '', resepsiLocation: '', resepsiAddress: '', themeId: 'javanese',
     });
+    const [slugEdited, setSlugEdited] = useState(false); // true = user sudah ubah manual
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    const set = (k: string) => (e: any) => setForm(f => ({ ...f, [k]: e.target.value }));
+    // Auto-generate slug dari nama mempelai (hanya jika belum diedit manual)
+    const setField = (k: string) => (e: any) => {
+        const val = e.target.value;
+        setForm(f => {
+            const next = { ...f, [k]: val };
+            if (!slugEdited) {
+                next.slug = generateSlug(
+                    k === 'brideShort' ? val : f.brideShort,
+                    k === 'groomShort' ? val : f.groomShort,
+                );
+            }
+            return next;
+        });
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,25 +77,64 @@ function CreateWeddingForm({ onSuccess }: { onSuccess: () => void }) {
             )}
 
             <FormGrid>
-                <FormField label="URL Slug *" placeholder="aditya-ratna" value={form.slug} onChange={set('slug')} required />
-                <FormField label="Nama Mempelai Wanita *" placeholder="Siti Ratna Sari" value={form.brideName} onChange={set('brideName')} required />
-                <FormField label="Nama Singkat Wanita *" placeholder="Ratna" value={form.brideShort} onChange={set('brideShort')} required />
-                <FormField label="Orang Tua Wanita *" placeholder="Bapak/Ibu ..." value={form.brideParents} onChange={set('brideParents')} required />
-                <FormField label="Nama Mempelai Pria *" placeholder="Aditya Wijaya" value={form.groomName} onChange={set('groomName')} required />
-                <FormField label="Nama Singkat Pria *" placeholder="Aditya" value={form.groomShort} onChange={set('groomShort')} required />
-                <FormField label="Orang Tua Pria *" placeholder="Bapak/Ibu ..." value={form.groomParents} onChange={set('groomParents')} required />
-                <FormField label="Tanggal Pernikahan *" type="datetime-local" value={form.date} onChange={set('date')} required />
-                <FormField label="Waktu Akad *" placeholder="09.00 - 10.00 WIB" value={form.akadTime} onChange={set('akadTime')} required />
-                <FormField label="Lokasi Akad *" placeholder="Masjid ..." value={form.akadLocation} onChange={set('akadLocation')} required />
-                <FormField label="Alamat Akad" placeholder="Jl. ..." value={form.akadAddress} onChange={set('akadAddress')} />
-                <FormField label="Waktu Resepsi *" placeholder="11.00 - 14.00 WIB" value={form.resepsiTime} onChange={set('resepsiTime')} required />
-                <FormField label="Lokasi Resepsi *" placeholder="Gedung ..." value={form.resepsiLocation} onChange={set('resepsiLocation')} required />
-                <FormField label="Alamat Resepsi" placeholder="Jl. ..." value={form.resepsiAddress} onChange={set('resepsiAddress')} />
+                <FormField label="Nama Mempelai Wanita *" placeholder="Siti Ratna Sari" value={form.brideName} onChange={setField('brideName')} required />
+                <FormField label="Nama Singkat Wanita *" placeholder="Ratna" value={form.brideShort} onChange={setField('brideShort')} required />
+                <FormField label="Orang Tua Wanita *" placeholder="Bapak/Ibu ..." value={form.brideParents} onChange={setField('brideParents')} required />
+                <FormField label="Nama Mempelai Pria *" placeholder="Aditya Wijaya" value={form.groomName} onChange={setField('groomName')} required />
+                <FormField label="Nama Singkat Pria *" placeholder="Aditya" value={form.groomShort} onChange={setField('groomShort')} required />
+                <FormField label="Orang Tua Pria *" placeholder="Bapak/Ibu ..." value={form.groomParents} onChange={setField('groomParents')} required />
+                <FormField label="Tanggal Pernikahan *" type="datetime-local" value={form.date} onChange={setField('date')} required />
+                <FormField label="Waktu Akad *" placeholder="09.00 - 10.00 WIB" value={form.akadTime} onChange={setField('akadTime')} required />
+                <FormField label="Lokasi Akad *" placeholder="Masjid ..." value={form.akadLocation} onChange={setField('akadLocation')} required />
+                <FormField label="Alamat Akad" placeholder="Jl. ..." value={form.akadAddress} onChange={setField('akadAddress')} />
+                <FormField label="Waktu Resepsi *" placeholder="11.00 - 14.00 WIB" value={form.resepsiTime} onChange={setField('resepsiTime')} required />
+                <FormField label="Lokasi Resepsi *" placeholder="Gedung ..." value={form.resepsiLocation} onChange={setField('resepsiLocation')} required />
+                <FormField label="Alamat Resepsi" placeholder="Jl. ..." value={form.resepsiAddress} onChange={setField('resepsiAddress')} />
                 <div className="sm:col-span-2">
                     <TemplateSelector
                         value={form.themeId}
                         onChange={(val) => setForm({ ...form, themeId: val })}
                     />
+                </div>
+
+                {/* URL Slug — auto-generated, bisa diedit manual */}
+                <div className="sm:col-span-2 space-y-1.5">
+                    <div className="flex items-center justify-between">
+                        <label className="text-xs font-semibold uppercase tracking-wide" style={{ color: 'var(--ui-text-muted)' }}>
+                            URL Undangan
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => setSlugEdited(s => !s)}
+                            className="text-[11px] font-semibold px-2 py-0.5 rounded-full border transition-all"
+                            style={{ color: slugEdited ? 'var(--color-gold, #c9a96e)' : 'var(--ui-text-muted)', borderColor: slugEdited ? 'rgba(201,169,110,0.3)' : 'var(--ui-border)' }}>
+                            {slugEdited ? '✏️ Mode edit' : '✨ Auto'}
+                        </button>
+                    </div>
+                    <div className="flex items-center gap-0 rounded-xl overflow-hidden border"
+                        style={{ borderColor: 'var(--ui-input-border)', background: 'var(--ui-input-bg)' }}>
+                        <span className="px-3 py-2.5 text-sm border-r shrink-0"
+                            style={{ color: 'var(--ui-text-muted)', borderColor: 'var(--ui-input-border)', background: 'var(--ui-bg-hover)' }}>
+                            vowify.id/
+                        </span>
+                        <input
+                            value={form.slug}
+                            readOnly={!slugEdited}
+                            onChange={e => setForm(f => ({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') }))}
+                            placeholder="aditya-ratna-2026"
+                            className="flex-1 px-3 py-2.5 text-sm bg-transparent focus:outline-none"
+                            style={{
+                                color: 'var(--ui-text-primary)',
+                                cursor: slugEdited ? 'text' : 'default',
+                                opacity: !slugEdited && !form.slug ? 0.4 : 1,
+                            }}
+                        />
+                    </div>
+                    <p className="text-[11px]" style={{ color: 'var(--ui-text-muted)' }}>
+                        {slugEdited
+                            ? 'URL diatur manual. Gunakan huruf kecil, angka, dan tanda hubung saja.'
+                            : 'URL dibuat otomatis dari nama mempelai. Klik “Auto” untuk edit manual.'}
+                    </p>
                 </div>
             </FormGrid>
 

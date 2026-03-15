@@ -41,6 +41,9 @@ export type {
 //  import terpisah agar tipe tersedia secara lokal)
 import type { TemplateConfig, TemplateProps, PhotoSlot, TemplateCategory, TemplateStatus, TemplateTier } from './_types';
 
+// ── Import canonical slots untuk validasi ─────────────────────────
+import { CANONICAL_SLOTS } from './_slots';
+
 // ── Import dari tiap kategori ──────────────────────────────────────
 import { TRADISIONAL_TEMPLATES } from './tradisional/_index';
 import { MODERN_TEMPLATES } from './modern/_index';
@@ -193,9 +196,54 @@ export function getSharedTemplateNames(slotKey: string, currentThemeId: string):
         .map(t => t.name);
 }
 
+// ─────────────────────────────────────────────────────────────────────
+// CANONICAL SLOT VALIDATION — Opsi B: Shared Core + Optional Fields
+// ─────────────────────────────────────────────────────────────────────
+
 /**
- * Resolve photo URL dari map photos, dengan fallback ke legacy field.
- * Komponen template menggunakan ini untuk backward compat.
+ * Validasi bahwa semua template menyertakan seluruh CANONICAL_SLOTS.
+ * Dipanggil sekali saat startup (dev only) untuk mendeteksi template
+ * yang tidak mengikuti standar Opsi B.
+ *
+ * @returns Array error — kosong jika semua template valid
+ *
+ * @example
+ *   // Di _app.tsx atau middleware (dev only):
+ *   if (process.env.NODE_ENV === 'development') {
+ *     const errors = validateTemplateSlots();
+ *     if (errors.length) console.warn('[Template] Slot violations:', errors);
+ *   }
+ */
+export function validateTemplateSlots(): string[] {
+    const canonicalKeys = CANONICAL_SLOTS.map(s => s.key);
+    const errors: string[] = [];
+
+    for (const template of TEMPLATES) {
+        const templateKeys = new Set(template.photoSlots.map(s => s.key));
+        for (const key of canonicalKeys) {
+            if (!templateKeys.has(key)) {
+                errors.push(
+                    `[${template.id}] Missing canonical slot: "${key}" — tambahkan ke photoSlots atau spread CANONICAL_SLOTS`
+                );
+            }
+        }
+    }
+
+    return errors;
+}
+
+/**
+ * Cek apakah sebuah slot key adalah bagian dari canonical slots.
+ * Berguna untuk badge "Core" di UI gallery dashboard.
+ */
+export function isCanonicalSlot(key: string): boolean {
+    return CANONICAL_SLOTS.some(s => s.key === key);
+}
+
+/**
+ * Resolve a photo URL from the new `photos` map, with
+ * optional fallback to the legacy individual field.
+ * Returns '' if no real photo is found.
  */
 export function resolvePhoto(
     photos: Record<string, string>,

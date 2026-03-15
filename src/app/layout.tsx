@@ -38,7 +38,7 @@ export default function RootLayout({
       </head>
       <body
         suppressHydrationWarning
-        className={`${playfair.variable} ${cormorant.variable} ${pinyon.variable} font-body antialiased`}
+        className={`${playfair.variable} ${cormorant.variable} ${pinyon.variable} font-body antialiased relative`}
       >
         <Providers>{children}</Providers>
       </body>

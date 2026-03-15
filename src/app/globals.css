@@ -104,9 +104,8 @@
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   ZONA: APP (Landing page, login, register)
+   ZONA: APP (Login, register)
    Berlaku untuk [data-zone="app"]
-   Bisa ikut dark mode tapi punya palette landingnya sendiri.
 ══════════════════════════════════════════════════════════════════════ */
 
 [data-zone="app"] {
@@ -124,6 +123,78 @@
 
   background: var(--app-bg);
   color: var(--app-fg);
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   ZONA: LANDING (Marketing landing page)
+   Berlaku untuk [data-zone="landing"]
+   Dark elegant by default — tone romantis & premium.
+══════════════════════════════════════════════════════════════════════ */
+
+[data-zone="landing"] {
+  /* Nuansa Light Theme / Premium Wedding */
+  --lp-bg:          #FBF8F3; /* Ivory Silk */
+  --lp-bg-section:  #FFFFFF;
+  --lp-bg-card:     #FFFFFF;
+  --lp-bg-card-hover: #FDFBFC;
+  --lp-gold:        #A88132; /* Deep Gold */
+  --lp-gold-light:  #CBA04D;
+  --lp-gold-dim:    rgba(168, 129, 50, 0.15);
+  --lp-blush:       #F4D6D6; /* Blush Petal */
+  
+  --lp-cream:       #3A3A3A; /* Charcoal Soft (untuk heading dominan) */
+  --lp-text:        #3A3A3A; /* Charcoal Soft */
+  --lp-text-muted:  rgba(58, 58, 58, 0.75);
+  
+  --lp-border:      rgba(168, 129, 50, 0.40);
+  --lp-border-subtle: rgba(58, 58, 58, 0.12); /* Border lembut dari charcoal */
+  --lp-shadow:      0 8px 32px rgba(58, 58, 58, 0.06);
+  --lp-shadow-gold: 0 4px 24px rgba(168, 129, 50, 0.30);
+  --lp-gradient-hero: linear-gradient(to bottom, rgba(251,248,243,0.0) 0%, rgba(251,248,243,0.7) 60%, rgba(251,248,243,1) 100%);
+
+  background: var(--lp-bg);
+  color: var(--lp-text);
+  font-family: var(--font-body, serif);
+
+  /* smooth scroll */
+  scroll-behavior: smooth;
+}
+
+/* Animasi keyframes untuk landing page */
+@keyframes lp-fade-up {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes lp-fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes lp-float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-8px); }
+}
+@keyframes lp-shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+@keyframes lp-spin-slow {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+[data-zone="landing"] .lp-animate-fade-up {
+  animation: lp-fade-up 0.7s ease both;
+}
+[data-zone="landing"] .lp-animate-float {
+  animation: lp-float 3s ease-in-out infinite;
+}
+[data-zone="landing"] .lp-gold-shimmer {
+  background: linear-gradient(90deg, var(--lp-gold) 0%, var(--lp-gold-light) 40%, var(--lp-gold) 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: lp-shimmer 3s linear infinite;
 }
 
 /* ══════════════════════════════════════════════════════════════════

@@ -19,13 +19,13 @@ export const W_DATA = {
     mapUrl: "https://maps.app.goo.gl/yyy",
   },
   gallery: [
-    "/images/gallery_1.png",
-    "/images/gallery_2.png",
-    "/images/gallery_3.png",
+    "/images/gallery_1.webp",
+    "/images/gallery_2.webp",
+    "/images/gallery_3.webp",
     // placeholder gallery
-    "/images/gallery_1.png",
-    "/images/gallery_2.png",
-    "/images/gallery_3.png",
+    "/images/gallery_1.webp",
+    "/images/gallery_2.webp",
+    "/images/gallery_3.webp",
   ],
   timeline: [
     {
@@ -56,5 +56,5 @@ export const W_DATA = {
       holder: "Siti Ratna Sari"
     }
   ],
-  qris: "/images/qris_placeholder.png"
+  qris: "/images/qris_placeholder.webp"
 };

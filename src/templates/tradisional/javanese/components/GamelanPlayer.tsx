@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Music, Music2 } from "lucide-react";
 
-export default function GamelanPlayer({ audioSrc = "/audio/gamelan.mp3" }: { audioSrc?: string }) {
+export default function GamelanPlayer({ audioSrc = "/assets/gamelan.mp3" }: { audioSrc?: string }) {
     const [isPlaying, setIsPlaying] = useState(false);
     const audioRef = useRef<HTMLAudioElement | null>(null);
 

@@ -1,6 +1,4 @@
-// Import dari generated client (bukan @prisma/client yang hanya stub)
-// .prisma/client/index berisi types lengkap hasil `prisma generate`
-import { PrismaClient } from '.prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
 import pg from 'pg';
 

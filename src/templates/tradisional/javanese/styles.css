@@ -6,7 +6,7 @@
  *
  * Palette:
  *   Coklat tua, emas, hijau sogan, krem hangat
- *   Motif batik, ornamen gunungan
+ *   Motif batik, ornamen gunungan, wayang
  */
 
 /* ── Color tokens khusus Javanese ──────────────────────────────────── */
@@ -15,8 +15,8 @@
     /* Krem — background utama */
     --jv-bg-alt: #EDD9B0;
     /* Krem gelap — section alt */
-    --jv-bg-dark: #2C1A0E;
-    /* Coklat sangat tua — section hero/footer */
+    --jv-bg-dark: #1E110A;
+    /* Coklat hampir hitam — hero/footer */
     --jv-primary: #3E2723;
     /* Coklat tua */
     --jv-gold: #C6A75E;
@@ -52,6 +52,7 @@
     background: var(--jv-bg);
     color: var(--jv-text);
     font-family: var(--jv-font-body);
+    font-size: 1.05rem;
 }
 
 /* ── Heading pakai serif Javanese ──────────────────────────────────── */
@@ -66,10 +67,11 @@
 [data-template="javanese"] .jv-names {
     font-family: var(--jv-font-script);
     color: var(--jv-gold);
-    line-height: 1.1;
+    line-height: 1.15;
+    letter-spacing: 0.02em;
 }
 
-/* ── Section dengan background krem gelap ──────────────────────────── */
+/* ── Section alt (krem gelap) ──────────────────────────────────────── */
 [data-template="javanese"] .jv-section-alt {
     background: var(--jv-bg-alt);
 }
@@ -88,46 +90,41 @@
     margin: 1.5rem auto;
 }
 
-/* ── Batik overlay khusus Javanese ──────────────────────────────────── */
-[data-template="javanese"] .jv-batik {
-    background-image: url('https://www.transparenttextures.com/patterns/dark-wood.png');
-    background-repeat: repeat;
-    opacity: 0.04;
-    pointer-events: none;
-    position: absolute;
-    inset: 0;
-    z-index: 0;
-}
-
 /* ── Tombol khas Javanese ────────────────────────────────────────────── */
 [data-template="javanese"] .jv-btn {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
-    padding: 0.75rem 2rem;
+    padding: 0.85rem 2.25rem;
     border-radius: 9999px;
     font-family: var(--jv-font-serif);
     font-weight: 600;
-    letter-spacing: 0.05em;
-    border: 1px solid var(--jv-gold);
+    font-size: 0.875rem;
+    letter-spacing: 0.06em;
+    border: 1.5px solid var(--jv-gold);
     background: transparent;
     color: var(--jv-gold);
-    transition: all 0.3s ease;
+    transition: all 0.35s ease;
     cursor: pointer;
+    box-shadow: 0 0 0 0 rgba(198, 167, 94, 0);
 }
 
 [data-template="javanese"] .jv-btn:hover {
     background: var(--jv-gold);
-    color: var(--jv-primary);
+    color: var(--jv-bg-dark);
+    box-shadow: 0 6px 24px rgba(198, 167, 94, 0.35);
+    transform: translateY(-1px);
 }
 
 [data-template="javanese"] .jv-btn-filled {
     background: var(--jv-gold);
     color: var(--jv-primary);
+    box-shadow: var(--jv-shadow-gold);
 }
 
 [data-template="javanese"] .jv-btn-filled:hover {
     background: var(--jv-gold-light);
+    transform: translateY(-1px);
 }
 
 /* ── Card / kotak konten ─────────────────────────────────────────────── */
@@ -145,6 +142,42 @@
     border-radius: 0.75rem;
     box-shadow: var(--jv-shadow-gold);
     border: 3px solid rgba(198, 167, 94, 0.3);
+}
+
+/* ── Ornamen Border Section ────────────────────────────────────────── */
+[data-template="javanese"] .jv-section-border {
+    position: relative;
+}
+
+[data-template="javanese"] .jv-section-border::before,
+[data-template="javanese"] .jv-section-border::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(198, 167, 94, 0.2) 10%,
+            rgba(198, 167, 94, 0.7) 50%,
+            rgba(198, 167, 94, 0.2) 90%,
+            transparent 100%);
+}
+
+/* ── Animasi Fade-in untuk section ────────────────────────────────── */
+[data-template="javanese"] .jv-fade-in {
+    animation: jv-fadeIn 0.8s ease forwards;
+}
+
+@keyframes jv-fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 /* ── Scrollbar Javanese ──────────────────────────────────────────────── */
@@ -165,4 +198,33 @@
 [data-template="javanese"] ::selection {
     background: rgba(198, 167, 94, 0.25);
     color: var(--jv-primary);
+}
+
+/* ── Tooltip / keterangan tambahan kecil ────────────────────────────── */
+[data-template="javanese"] .jv-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--jv-gold);
+    opacity: 0.7;
+}
+
+/* ── Input di RSVP ──────────────────────────────────────────────────── */
+[data-template="javanese"] input,
+[data-template="javanese"] select,
+[data-template="javanese"] textarea {
+    background: var(--jv-cream);
+    border: 1px solid var(--jv-border);
+    color: var(--jv-text);
+    border-radius: 0.5rem;
+    font-family: var(--jv-font-body);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-template="javanese"] input:focus,
+[data-template="javanese"] select:focus,
+[data-template="javanese"] textarea:focus {
+    outline: none;
+    border-color: var(--jv-gold);
+    box-shadow: 0 0 0 2px rgba(198, 167, 94, 0.15);
 }

@@ -225,14 +225,14 @@ export default function TemplatesPage() {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, scale: 0.95 }}
                             transition={{ delay: index * 0.03 }}
-                            className="group rounded-2xl overflow-hidden transition-all duration-300 hover:shadow-xl hover:shadow-gold/10"
+                            className="group rounded-2xl overflow-hidden transition-[box-shadow,border-color,transform] duration-500 hover:shadow-xl hover:shadow-gold/10 hover:-translate-y-1"
                             style={{
                                 background: 'var(--ui-bg-card)',
                                 border: selectedWedding?.themeId === template.id
                                     ? '1.5px solid #C6A75E'
                                     : '1px solid var(--ui-border)',
                                 boxShadow: selectedWedding?.themeId === template.id
-                                    ? '0 0 0 2px rgba(198,167,94,0.15)'
+                                    ? '0 8px 24px -4px rgba(198,167,94,0.3)'
                                     : 'var(--ui-shadow)',
                             }}
                         >
@@ -242,7 +242,7 @@ export default function TemplatesPage() {
                                     src={template.previewImage}
                                     alt={template.name}
                                     fill
-                                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                                    className="object-cover will-change-transform transition-transform duration-1000 ease-[cubic-bezier(0.2,0.8,0.2,1)] group-hover:scale-110"
                                 />
 
                                 {/* Hover overlay */}

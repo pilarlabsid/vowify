@@ -55,6 +55,12 @@ const BankCard = ({ bank, number, holder }: any) => {
 export default function Envelope({ data }: { data: WeddingData }) {
     const [showQR, setShowQR] = useState(false);
 
+    const qrisUrl = data.qris || '';
+    const hasBankAccounts = data.bankAccounts && data.bankAccounts.length > 0;
+
+    // Hide the entire section if nothing to show
+    if (!hasBankAccounts && !qrisUrl) return null;
+
     return (
         <section className="py-24 px-6 bg-cream relative overflow-hidden">
             <div className="batik-overlay opacity-[0.03]"></div>
@@ -65,39 +71,45 @@ export default function Envelope({ data }: { data: WeddingData }) {
                     Doa restu Anda merupakan karunia yang sangat berarti bagi kami. Namun jika Anda ingin memberikan tanda kasih, Anda dapat mengirimkannya melalui:
                 </p>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    {data.bankAccounts.map((acc, i) => (
-                        <BankCard key={i} {...acc} />
-                    ))}
-                </div>
+                {hasBankAccounts && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
+                        {data.bankAccounts.map((acc, i) => (
+                            <BankCard key={i} {...acc} />
+                        ))}
+                    </div>
+                )}
 
-                <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => setShowQR(!showQR)}
-                    className="mx-auto flex items-center gap-3 bg-gold px-12 py-4 rounded-full text-primary font-bold shadow-xl hover:shadow-gold/20 transition-all uppercase tracking-widest text-sm"
-                >
-                    <QrCode className="w-5 h-5" />
-                    {showQR ? 'Hide QR Code' : 'Show QRIS QR Code'}
-                </motion.button>
+                {qrisUrl && (
+                    <>
+                        <motion.button
+                            whileHover={{ scale: 1.05 }}
+                            whileTap={{ scale: 0.95 }}
+                            onClick={() => setShowQR(!showQR)}
+                            className="mx-auto flex items-center gap-3 bg-gold px-12 py-4 rounded-full text-primary font-bold shadow-xl hover:shadow-gold/20 transition-all uppercase tracking-widest text-sm"
+                        >
+                            <QrCode className="w-5 h-5" />
+                            {showQR ? 'Hide QR Code' : 'Show QRIS QR Code'}
+                        </motion.button>
 
-                <div className={`mt-12 overflow-hidden transition-all duration-700 ${showQR ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
-                    <div className="bg-white p-6 rounded-3xl border border-gold/20 shadow-2xl max-w-[300px] mx-auto group">
-                        <div className="relative w-full aspect-square bg-cream overflow-hidden rounded-xl group-hover:scale-[1.02] transition-transform shadow-inner">
-                            <Image
-                                src={data.qris}
-                                alt="QRIS"
-                                fill
-                                sizes="(max-width: 768px) 300px, 300px"
-                                className="object-contain p-4 mix-blend-multiply opacity-80"
-                            />
-                            <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-elegant/10 backdrop-blur-[2px]">
-                                <p className="text-elegant font-bold text-xs bg-gold rounded-full px-4 py-1">Scan for Gift</p>
+                        <div className={`mt-12 overflow-hidden transition-all duration-700 ${showQR ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="bg-white p-6 rounded-3xl border border-gold/20 shadow-2xl max-w-[300px] mx-auto group">
+                                <div className="relative w-full aspect-square bg-cream overflow-hidden rounded-xl group-hover:scale-[1.02] transition-transform shadow-inner">
+                                    <Image
+                                        src={qrisUrl}
+                                        alt="QRIS"
+                                        fill
+                                        sizes="(max-width: 768px) 300px, 300px"
+                                        className="object-contain p-4 mix-blend-multiply opacity-80"
+                                    />
+                                    <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-elegant/10 backdrop-blur-[2px]">
+                                        <p className="text-elegant font-bold text-xs bg-gold rounded-full px-4 py-1">Scan for Gift</p>
+                                    </div>
+                                </div>
+                                <p className="mt-4 text-elegant text-xs font-bold uppercase tracking-widest tracking-loose opacity-60">Scan Me via QRIS</p>
                             </div>
                         </div>
-                        <p className="mt-4 text-elegant text-xs font-bold uppercase tracking-widest tracking-loose opacity-60">Scan Me via QRIS</p>
-                    </div>
-                </div>
+                    </>
+                )}
             </div>
         </section>
     );

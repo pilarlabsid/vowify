@@ -11,42 +11,58 @@ import { usePathname, useRouter } from 'next/navigation';
 import { DashboardProvider, useDashboard } from './dashboard-context';
 import { useEffect } from 'react';
 import { ThemeToggle } from '@/lib/theme-context';
+import { motion, LayoutGroup } from 'framer-motion';
+
+const SidebarItem = ({ icon, label, href, active, onClick }: any) => {
+    return (
+        <Link
+            href={href}
+            onClick={onClick}
+            className="w-full relative py-2.5 px-4 rounded-xl flex items-center gap-3 transition-all duration-300 group"
+            style={{ color: active ? '#1C1612' : 'var(--ui-sidebar-text)' }}
+        >
+            {active && (
+                <motion.div
+                    layoutId="activeSidebarPill"
+                    className="absolute inset-x-0 inset-y-0.5 z-0 rounded-xl"
+                    style={{ 
+                        background: 'var(--ui-sidebar-nav-active)',
+                        boxShadow: '0 4px 12px -2px rgba(198, 167, 94, 0.4)',
+                    }}
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                />
+            )}
+
+            <motion.span
+                className="relative z-10"
+                animate={{ scale: active ? 1.1 : 1 }}
+                style={{ color: active ? '#1C1612' : 'rgba(198,167,94,0.6)' }}
+            >
+                {icon}
+            </motion.span>
+
+            <span className={`relative z-10 text-sm tracking-wide ${active ? 'font-bold' : 'font-medium opacity-80 group-hover:opacity-100'}`}>
+                {label}
+            </span>
+
+
+        </Link>
+    );
+};
 
 function DashboardSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
     const { data: session } = useSession() as any;
     const pathname = usePathname();
+    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
-    const SidebarItem = ({ icon, label, href }: any) => {
-        const active = pathname === href;
-        return (
-            <Link
-                href={href}
-                onClick={() => setIsSidebarOpen(false)}
-                className="w-full flex items-center gap-3 py-3 px-4 rounded-2xl transition-all duration-200 group text-left"
-                style={active ? {
-                    background: 'var(--ui-sidebar-nav-active)',
-                    color: '#1C1612',
-                    fontWeight: 700,
-                    boxShadow: '0 4px 12px rgba(198,167,94,0.25)',
-                } : {
-                    color: 'var(--ui-sidebar-text)',
-                }}
-                onMouseEnter={e => {
-                    if (!active) (e.currentTarget as HTMLElement).style.background = 'var(--ui-sidebar-nav-hover)';
-                }}
-                onMouseLeave={e => {
-                    if (!active) (e.currentTarget as HTMLElement).style.background = '';
-                }}
-            >
-                <span className={active ? 'text-primary' : ''} style={!active ? { color: 'rgba(198,167,94,0.6)' } : {}}>{icon}</span>
-                <span className="text-sm font-medium">{label}</span>
-            </Link>
-        );
+    const handleSignOut = async () => {
+        setIsLoggingOut(true);
+        await signOut({ callbackUrl: '/login' });
     };
 
     return (
         <aside className={`
-            fixed inset-y-0 left-0 w-64 flex flex-col p-6 space-y-8 z-50
+            fixed inset-y-0 left-0 w-64 flex flex-col p-6 py-10 space-y-8 z-50
             transition-transform duration-300 ease-in-out
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
             lg:translate-x-0 lg:relative
@@ -55,10 +71,9 @@ function DashboardSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
                 borderRight: '1px solid var(--ui-sidebar-border)',
             }}>
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-gold rounded-xl flex items-center justify-center text-primary font-bold text-xl font-script">V</div>
-                    <span className="text-2xl font-script tracking-wide text-gold">Vowify.id</span>
-                </div>
+                <Link href="/" className="flex items-center gap-3 group transition-opacity hover:opacity-80">
+                    <span className="text-3xl font-script tracking-wide text-gold">Vowify.id</span>
+                </Link>
                 <button onClick={() => setIsSidebarOpen(false)} className="lg:hidden p-2 rounded-lg" style={{ color: 'var(--ui-sidebar-text)' }}>
                     <X className="w-5 h-5" />
                 </button>
@@ -74,25 +89,40 @@ function DashboardSidebar({ isSidebarOpen, setIsSidebarOpen }: any) {
                 </div>
             </div>
 
-            <nav className="flex-1 space-y-1.5 overflow-y-auto">
-                <SidebarItem icon={<LayoutDashboard className="w-5 h-5" />} label="Ringkasan" href="/dashboard" />
-                <SidebarItem icon={<Heart className="w-5 h-5" />} label="Undangan Saya" href="/dashboard/weddings" />
-                <SidebarItem icon={<Edit2 className="w-5 h-5" />} label="Edit Undangan" href="/dashboard/edit" />
-                <SidebarItem icon={<Users className="w-5 h-5" />} label="Kirim Undangan" href="/dashboard/guests" />
-                <SidebarItem icon={<MessageSquare className="w-5 h-5" />} label="Ucapan & Doa" href="/dashboard/greetings" />
-                <SidebarItem icon={<ImageIcon className="w-5 h-5" />} label="Foto & Media" href="/dashboard/gallery" />
-                <SidebarItem icon={<Palette className="w-5 h-5" />} label="Koleksi Template" href="/dashboard/templates" />
-                <SidebarItem icon={<Settings className="w-5 h-5" />} label="Pengaturan" href="/dashboard/settings" />
+            <nav className="flex-1 space-y-2 overflow-y-auto px-2 -mx-2 py-1 custom-scrollbar">
+                <LayoutGroup id="sidebar">
+                    <SidebarItem icon={<LayoutDashboard size={20} />} label="Ringkasan" href="/dashboard" active={pathname === '/dashboard'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<Heart size={20} />} label="Undangan Saya" href="/dashboard/weddings" active={pathname === '/dashboard/weddings'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<Edit2 size={20} />} label="Edit Undangan" href="/dashboard/edit" active={pathname === '/dashboard/edit'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<Users size={20} />} label="Kirim Undangan" href="/dashboard/guests" active={pathname === '/dashboard/guests'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<MessageSquare size={20} />} label="Ucapan & Doa" href="/dashboard/greetings" active={pathname === '/dashboard/greetings'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<ImageIcon size={20} />} label="Foto & Media" href="/dashboard/gallery" active={pathname === '/dashboard/gallery'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<Palette size={20} />} label="Koleksi Template" href="/dashboard/templates" active={pathname === '/dashboard/templates'} onClick={() => setIsSidebarOpen(false)} />
+                    <SidebarItem icon={<Settings size={20} />} label="Pengaturan" href="/dashboard/settings" active={pathname === '/dashboard/settings'} onClick={() => setIsSidebarOpen(false)} />
+                </LayoutGroup>
             </nav>
 
-            <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
-                className="flex items-center gap-3 transition-colors py-3 px-4 rounded-xl border hover:text-red-400 hover:border-red-400/20"
-                style={{ color: 'var(--ui-sidebar-text-muted)', borderColor: 'var(--ui-sidebar-border)' }}
-            >
-                <LogOut className="w-5 h-5" />
-                <span className="font-medium text-sm">Keluar</span>
-            </button>
+            <div className="pt-4 mt-auto border-t" style={{ borderColor: 'var(--ui-sidebar-border)' }}>
+                <motion.button
+                    disabled={isLoggingOut}
+                    whileHover={!isLoggingOut ? { x: 4 } : {}}
+                    whileTap={!isLoggingOut ? { scale: 0.98 } : {}}
+                    onClick={handleSignOut}
+                    className={`w-full flex items-center gap-3 transition-all py-3 px-4 rounded-2xl group ${isLoggingOut ? 'opacity-50 cursor-not-allowed' : 'hover:bg-red-500/5'}`}
+                    style={{
+                        color: 'var(--ui-sidebar-text-muted)',
+                    }}
+                >
+                    {isLoggingOut ? (
+                        <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                        <LogOut className="w-5 h-5 opacity-70 group-hover:opacity-100 group-hover:text-red-500 transition-all" />
+                    )}
+                    <span className="text-sm font-medium group-hover:text-red-500 transition-all">
+                        {isLoggingOut ? 'Memproses ...' : 'Keluar'}
+                    </span>
+                </motion.button>
+            </div>
         </aside>
     );
 }
@@ -165,6 +195,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const [announcement, setAnnouncement] = useState<string | null>(null);
     const [announcementVisible, setAnnouncementVisible] = useState(true);
+    const pathname = usePathname();
 
     useEffect(() => {
         fetch('/api/app-config')
@@ -209,7 +240,7 @@ function DashboardLayoutContent({ children }: { children: React.ReactNode }) {
                     </div>
                 )}
                 <DashboardHeader setIsSidebarOpen={setIsSidebarOpen} />
-                <div className="flex-1 p-6 lg:p-10">
+                <div className="flex-1 p-6 lg:p-10 relative">
                     {children}
                 </div>
             </main>

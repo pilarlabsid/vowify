@@ -4,7 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     Search, RefreshCw, Trash2, Check, X, Loader2,
-    UserCheck, UserX, Crown, ShieldCheck, Download, ChevronRight
+    UserCheck, UserX, Crown, ShieldCheck, Download, ChevronRight, Users
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -120,18 +120,19 @@ export default function AdminUsersPage() {
     const [actionLoading, setActionLoading] = useState<string | null>(null);
     const [deleteTarget, setDeleteTarget] = useState<User | null>(null);
     const [deleting, setDeleting] = useState(false);
+    const [roleFilter, setRoleFilter] = useState<'all' | 'admin' | 'user'>('all');
 
     const fetchUsers = useCallback(async () => {
         setLoading(true);
         try {
-            const res = await fetch(`/api/admin/users?page=${page}&search=${encodeURIComponent(search)}`);
+            const res = await fetch(`/api/admin/users?page=${page}&search=${encodeURIComponent(search)}&role=${roleFilter}`);
             const data = await res.json();
             setUsers(data.users || []);
             setTotal(data.total || 0);
         } finally {
             setLoading(false);
         }
-    }, [page, search]);
+    }, [page, search, roleFilter]);
 
     useEffect(() => { fetchUsers(); }, [fetchUsers]);
 
@@ -169,6 +170,23 @@ export default function AdminUsersPage() {
 
     return (
         <div className="space-y-6">
+            {/* Tabs for Differentiation */}
+            <div className="flex border-b" style={{ borderColor: 'var(--ui-divider)' }}>
+                {[
+                    { id: 'all', label: 'Semua User' },
+                    { id: 'admin', label: 'Admin Akun', icon: Crown },
+                    { id: 'user', label: 'Akun User', icon: Users }
+                ].map((tab: any) => (
+                    <button
+                        key={tab.id}
+                        onClick={() => { setRoleFilter(tab.id); setPage(1); }}
+                        className={`px-6 py-4 text-sm font-bold border-b-2 transition-all flex items-center gap-2 ${roleFilter === tab.id ? 'border-gold text-gold' : 'border-transparent opacity-50'}`}
+                    >
+                        {tab.icon && <tab.icon className="w-4 h-4" />}
+                        {tab.label}
+                    </button>
+                ))}
+            </div>
             {/* Toolbar */}
             <div className="flex items-center gap-3">
                 <div
@@ -229,10 +247,10 @@ export default function AdminUsersPage() {
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
-                                        className="transition-colors"
+                                        className={`transition-colors border-b last:border-0 ${user.role === 'admin' ? 'bg-gold/5' : ''}`}
                                         style={{ borderColor: 'var(--ui-divider)' }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'var(--ui-bg-hover)')}
-                                        onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
+                                        onMouseEnter={e => (e.currentTarget.style.background = user.role === 'admin' ? 'bg-gold/10' : 'var(--ui-bg-hover)')}
+                                        onMouseLeave={e => (e.currentTarget.style.background = user.role === 'admin' ? 'transparent' : 'transparent')}
                                     >
                                         {/* User info */}
                                         <td className="px-6 py-4">

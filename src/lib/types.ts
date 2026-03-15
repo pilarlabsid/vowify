@@ -24,10 +24,19 @@ export interface WeddingData {
         address: string;
         mapUrl: string;
     };
+    /**
+     * @deprecated Gunakan photos.gallery_1 s/d photos.gallery_6 (canonical slots).
+     * Field ini dipertahankan untuk backward compat dengan data lama.
+     */
     gallery: string[];
     /**
-     * Template-specific photo slots, keyed by slot key (e.g. "bride_portrait").
-     * Dashboard writes here; template components read from here via resolvePhoto().
+     * Semua foto template disimpan di sini, termasuk canonical slots:
+     *   - bride_portrait, groom_portrait   → foto mempelai
+     *   - hero_couple                      → foto cover (wajib)
+     *   - gallery_1 .. gallery_6           → galeri (1-3 wajib, 4-6 opsional)
+     *
+     * Template opsional bisa tambah key sendiri (hero_fullscreen, dll).
+     * Dashboard membaca photoSlots dari registry untuk menampilkan uploader.
      */
     photos: Record<string, string>;
     timeline: {

@@ -1,5 +1,5 @@
 import { resolveTemplate, ACTIVE_TEMPLATES } from "@/templates/registry";
-import { DUMMY_WEDDING_DATA } from "@/lib/dummy-data";
+import { getDummyData } from "@/lib/dummy-data";
 import { notFound } from "next/navigation";
 
 // Render on-demand — tidak perlu pre-build semua halaman preview saat deploy.
@@ -21,7 +21,7 @@ export default async function PreviewPage(props: {
     const Template = await resolveTemplate(themeId);
     if (!Template) notFound();
 
-    const data = { ...DUMMY_WEDDING_DATA, themeId };
+    const data = getDummyData(themeId);
 
     return <Template data={data} guestName={searchParams.to || "Nama Tamu"} />;
 }

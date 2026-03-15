@@ -46,3 +46,8 @@ next-env.d.ts
 # uploaded user files
 /public/uploads/*
 !/public/uploads/.gitkeep
+
+# Local assets and database
+/Asset/
+/prisma/*.db
+/.vscode/

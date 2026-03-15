@@ -5,13 +5,15 @@ import { writeFile, mkdir } from 'fs/promises';
 import path from 'path';
 import sharp from 'sharp';
 import {
-    UPLOAD_DIR,
+    getTempUploadDir,
     QUOTA_PER_USER_BYTES,
     getUserStorageBytes,
     formatBytes,
+    deleteLocalFile,
+    isLocalUpload,
 } from '@/lib/storage';
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB per file
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB per file
 const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp', 'image/gif'];
 
 export async function POST(req: NextRequest) {
@@ -34,7 +36,7 @@ export async function POST(req: NextRequest) {
     }
 
     if (file.size > MAX_FILE_SIZE) {
-        return NextResponse.json({ error: 'Ukuran file terlalu besar. Maksimal 5MB.' }, { status: 400 });
+        return NextResponse.json({ error: 'Ukuran file terlalu besar. Maksimal 5 MB per foto.' }, { status: 400 });
     }
 
     // ── Kuota per user ──────────────────────────────────────────────────────
@@ -47,7 +49,6 @@ export async function POST(req: NextRequest) {
             { status: 413 }
         );
     }
-    // ────────────────────────────────────────────────────────────────────────
 
     const bytes = await file.arrayBuffer();
     const buffer = Buffer.from(new Uint8Array(bytes));
@@ -59,27 +60,58 @@ export async function POST(req: NextRequest) {
     if (file.type !== 'image/gif') {
         try {
             outputBuffer = await sharp(buffer as any)
-                .resize({ width: 1920, withoutEnlargement: true }) // Mencegah foto kecil ditarik pecah
-                .webp({ quality: 80 }) // Konversi ke format ringan
+                .resize({ width: 1920, withoutEnlargement: true })
+                .webp({ quality: 80 })
                 .toBuffer();
-            finalExt = 'webp'; // Ubah ekstensi
+            finalExt = 'webp';
         } catch (error) {
             console.error('Gagal mengkompres resolusi gambar, menggunakan aslinya:', error);
-            // Kalau gagal, kita tetap menggunakan aslinya
         }
     }
-    // ────────────────────────────────────────────────────────────────────────
 
-    // Nama file unik per user
     const timestamp = Date.now();
-    const fileName = `${userId}-${timestamp}.${finalExt}`;
+    const fileName = `${timestamp}.${finalExt}`;
+    // Simpan ke folder TEMP terlebih dahulu
+    const tempDir = getTempUploadDir(userId);
 
-    await mkdir(UPLOAD_DIR, { recursive: true });
-    await writeFile(path.join(UPLOAD_DIR, fileName), outputBuffer);
+    await mkdir(tempDir, { recursive: true });
+    await writeFile(path.join(tempDir, fileName), outputBuffer);
 
-    const publicUrl = `/uploads/${fileName}`;
-    // Info sisa penyimpanan kita hitung dari file SESUDAH dikompres!
+    const publicTempUrl = `/uploads/temp/${userId}/${fileName}`;
     const remaining = formatBytes(QUOTA_PER_USER_BYTES - usedBytes - outputBuffer.byteLength);
 
-    return NextResponse.json({ url: publicUrl, remaining }, { status: 200 });
+    return NextResponse.json({ url: publicTempUrl, remaining }, { status: 200 });
+}
+
+/**
+ * DELETE /api/upload?url=/uploads/{userId}/{file}
+ * Deletes a local upload file. Only the file owner can delete their own files.
+ */
+export async function DELETE(req: NextRequest) {
+    const session = await getServerSession(authOptions);
+    if (!session?.user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const userId = (session.user as any).id as string;
+    const url = req.nextUrl.searchParams.get('url');
+
+    if (!url || !isLocalUpload(url)) {
+        return NextResponse.json({ error: 'URL tidak valid.' }, { status: 400 });
+    }
+
+    // Security: ensure the file belongs to this user (/uploads/final/{userId}/... or /uploads/temp/{userId}/...)
+    const parts = url.replace(/^\/uploads\//, '').split('/');
+    // parts[0] is either 'temp', 'final', or legacy 'userId'
+    let ownerId = parts[0];
+    if (parts[0] === 'temp' || parts[0] === 'final') {
+        ownerId = parts[1];
+    }
+
+    if (ownerId !== userId) {
+        return NextResponse.json({ error: 'Forbidden.' }, { status: 403 });
+    }
+
+    await deleteLocalFile(url);
+    return NextResponse.json({ ok: true });
 }

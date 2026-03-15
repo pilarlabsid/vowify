@@ -1,0 +1,255 @@
+/*
+ * WAYANG BLACK GOLD TEMPLATE — styles.css
+ *
+ * CSS khusus untuk template Wayang Black & Gold (tema wayang Jawa elegan)
+ * File ini HANYA diimport oleh src/templates/tradisional/wayang-black-gold/index.tsx
+ *
+ * Palette:
+ *   Hitam pekat (#0A0A0A), emas (#C9A84C), krem (#F5EDD0), coklat tua (#1A0F00)
+ *   Ornamen wayang, batik parang, garis emas
+ */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Pinyon+Script&display=swap');
+
+/* ── Color tokens khusus Wayang Black Gold ──────────────────────────── */
+[data-template="wayang-black-gold"] {
+    --wbg-black:        #080808;     /* Hitam dasar */
+    --wbg-black-soft:   #111111;     /* Hitam lembut — card/section */
+    --wbg-black-deep:   #050505;     /* Hitam terdalam — hero */
+    --wbg-dark:         #1A1000;     /* Coklat sangat gelap */
+    --wbg-gold:         #C9A84C;     /* Emas utama */
+    --wbg-gold-bright:  #E8C96A;     /* Emas terang — highlight */
+    --wbg-gold-dim:     #A8873A;     /* Emas redup */
+    --wbg-gold-glow:    rgba(201, 168, 76, 0.35); /* Glow emas */
+    --wbg-cream:        #F5EDD0;     /* Krem hangat */
+    --wbg-cream-soft:   #EDE4C5;     /* Krem gelap */
+    --wbg-text-light:   #EDE0BB;     /* Teks terang di bg gelap */
+    --wbg-text-dim:     rgba(237, 224, 187, 0.55); /* Teks redup */
+    --wbg-border-gold:  rgba(201, 168, 76, 0.20); /* Border emas tipis */
+    --wbg-border-glow:  rgba(201, 168, 76, 0.50); /* Border emas cerah */
+
+    /* Tipografi */
+    --wbg-font-display: 'Cinzel Decorative', serif;    /* Judul besar */
+    --wbg-font-body:    'Cormorant Garamond', serif;   /* Body text */
+    --wbg-font-script:  'Pinyon Script', cursive;      /* Nama mempelai */
+
+    /* Gradients */
+    --wbg-grad-gold: linear-gradient(135deg, #C9A84C 0%, #E8C96A 50%, #A8873A 100%);
+    --wbg-grad-dark: linear-gradient(180deg, #080808 0%, #1A1000 100%);
+
+    /* Efek */
+    --wbg-shadow:       0 4px 32px rgba(0, 0, 0, 0.6);
+    --wbg-shadow-gold:  0 4px 24px rgba(201, 168, 76, 0.25);
+    --wbg-glow:         0 0 40px rgba(201, 168, 76, 0.15);
+
+    background: var(--wbg-black);
+    color: var(--wbg-cream);
+    font-family: var(--wbg-font-body);
+    font-size: 1.05rem;
+    line-height: 1.7;
+}
+
+/* ── Global heading ──────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] h1,
+[data-template="wayang-black-gold"] h2,
+[data-template="wayang-black-gold"] h3 {
+    font-family: var(--wbg-font-display);
+    color: var(--wbg-gold);
+    letter-spacing: 0.04em;
+}
+
+/* ── Nama mempelai — script font ──────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-names {
+    font-family: var(--wbg-font-script);
+    color: var(--wbg-gold);
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+}
+
+/* ── Section background variants ──────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-section-dark {
+    background: var(--wbg-black);
+    color: var(--wbg-cream);
+}
+
+[data-template="wayang-black-gold"] .wbg-section-soft {
+    background: var(--wbg-black-soft);
+    color: var(--wbg-cream);
+}
+
+[data-template="wayang-black-gold"] .wbg-section-deep {
+    background: var(--wbg-black-deep);
+    color: var(--wbg-cream);
+}
+
+/* ── Garis emas ornamen ────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-line-gold {
+    width: 6rem;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--wbg-gold), transparent);
+    margin: 1.5rem auto;
+}
+
+/* ── Tombol khas Wayang ──────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.85rem 2.25rem;
+    border-radius: 9999px;
+    font-family: var(--wbg-font-display);
+    font-weight: 400;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    border: 1px solid var(--wbg-gold);
+    background: transparent;
+    color: var(--wbg-gold);
+    transition: all 0.35s ease;
+    cursor: pointer;
+    text-transform: uppercase;
+}
+
+[data-template="wayang-black-gold"] .wbg-btn:hover {
+    background: var(--wbg-gold);
+    color: var(--wbg-black);
+    box-shadow: var(--wbg-shadow-gold);
+    transform: translateY(-2px);
+}
+
+[data-template="wayang-black-gold"] .wbg-btn-filled {
+    background: var(--wbg-grad-gold);
+    color: var(--wbg-black);
+    border: none;
+    box-shadow: var(--wbg-shadow-gold);
+}
+
+[data-template="wayang-black-gold"] .wbg-btn-filled:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 32px rgba(201, 168, 76, 0.4);
+}
+
+/* ── Card gelap dengan border emas ────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-card {
+    background: var(--wbg-black-soft);
+    border: 1px solid var(--wbg-border-gold);
+    border-radius: 1rem;
+    box-shadow: var(--wbg-shadow);
+}
+
+[data-template="wayang-black-gold"] .wbg-card:hover {
+    border-color: var(--wbg-border-glow);
+    box-shadow: var(--wbg-shadow-gold), var(--wbg-glow);
+}
+
+/* ── Portrait foto ────────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-portrait {
+    aspect-ratio: 3/4;
+    object-fit: cover;
+    border-radius: 0.75rem;
+    border: 2px solid var(--wbg-border-glow);
+    box-shadow: var(--wbg-shadow-gold);
+}
+
+/* ── Animasi ────────────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-fade-in {
+    animation: wbg-fadeIn 0.9s ease forwards;
+}
+
+@keyframes wbg-fadeIn {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes wbg-shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position: 200% center; }
+}
+
+[data-template="wayang-black-gold"] .wbg-shimmer-text {
+    background: linear-gradient(90deg, var(--wbg-gold-dim) 0%, var(--wbg-gold-bright) 40%, var(--wbg-gold-dim) 80%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: wbg-shimmer 4s linear infinite;
+}
+
+@keyframes wbg-float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+[data-template="wayang-black-gold"] .wbg-float {
+    animation: wbg-float 6s ease-in-out infinite;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] ::-webkit-scrollbar {
+    width: 4px;
+}
+[data-template="wayang-black-gold"] ::-webkit-scrollbar-track {
+    background: var(--wbg-black);
+}
+[data-template="wayang-black-gold"] ::-webkit-scrollbar-thumb {
+    background: var(--wbg-gold);
+    border-radius: 9999px;
+}
+
+/* ── Seleksi teks ──────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] ::selection {
+    background: rgba(201, 168, 76, 0.2);
+    color: var(--wbg-gold-bright);
+}
+
+/* ── Label teks kecil ──────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-label {
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--wbg-gold);
+    opacity: 0.7;
+    font-family: var(--wbg-font-display);
+}
+
+/* ── Input form ────────────────────────────────────────────────────── */
+[data-template="wayang-black-gold"] input,
+[data-template="wayang-black-gold"] select,
+[data-template="wayang-black-gold"] textarea {
+    background: rgba(201, 168, 76, 0.04);
+    border: 1px solid var(--wbg-border-gold);
+    color: var(--wbg-cream);
+    border-radius: 0.5rem;
+    font-family: var(--wbg-font-body);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+[data-template="wayang-black-gold"] input:focus,
+[data-template="wayang-black-gold"] select:focus,
+[data-template="wayang-black-gold"] textarea:focus {
+    outline: none;
+    border-color: var(--wbg-gold);
+    box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.12);
+}
+
+[data-template="wayang-black-gold"] input::placeholder,
+[data-template="wayang-black-gold"] textarea::placeholder {
+    color: rgba(237, 224, 187, 0.25);
+}
+
+/* ── Ornamen divider wayang ────────────────────────────────────────── */
+[data-template="wayang-black-gold"] .wbg-divider {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+}
+
+/* ── Gold glow pulse ornament ──────────────────────────────────────── */
+@keyframes wbg-pulse-glow {
+    0%, 100% { opacity: 0.3; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(1.05); }
+}
+
+[data-template="wayang-black-gold"] .wbg-glow-pulse {
+    animation: wbg-pulse-glow 3s ease-in-out infinite;
+}

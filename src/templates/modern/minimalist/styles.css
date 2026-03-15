@@ -1,165 +1,305 @@
 /*
- * MINIMALIST TEMPLATE — styles.css
+ * MINIMALIST TEMPLATE — styles.css  (v3 — Sage & Ivory palette)
  *
- * CSS khusus untuk template Minimalist (modern, clean, sans-serif).
- * File ini HANYA diimport oleh src/templates/minimalist/index.tsx
+ * Palette identity: Warm Ivory · Deep Slate · Sage Green accent
+ * ─────────────────────────────────────────────────────────────
+ * Completely distinct from Wayang Black Gold (gold + near-black).
+ * This template breathes: lots of white space, cool-warm balance,
+ * sage green as the sole accent — elegant, fresh, contemporary.
  *
- * Palette:
- *   Putih, abu-abu, hitam, aksen emas tipis
- *   Clean lines, banyak whitespace
+ * Accent RGB: 106 · 148 · 127  (#6A947F — sage)
  */
 
-/* ── Color tokens khusus Minimalist ────────────────────────────────── */
+/* ── Color tokens ───────────────────────────────────────────────────── */
 [data-template="minimalist"] {
-    --mn-bg: #FAFAFA;
-    /* Putih off-white */
-    --mn-bg-alt: #F4F4F2;
-    /* Abu sangat terang */
-    --mn-bg-dark: #1A1A1A;
-    /* Hitam — section hero/footer */
-    --mn-primary: #1A1A1A;
-    /* Hampir hitam */
-    --mn-secondary: #4A4A4A;
-    /* Abu tua */
-    --mn-muted: #888888;
-    /* Abu terang */
-    --mn-gold: #C6A75E;
-    /* Emas — satu-satunya aksen hangat */
-    --mn-gold-soft: rgba(198, 167, 94, 0.15);
-    --mn-white: #FFFFFF;
-    --mn-border: #E8E8E8;
-    --mn-border-soft: #F0F0F0;
 
-    /* Tipografi — lebih modern, pakai font body buatan sendiri */
-    --mn-font-serif: var(--font-serif);
-    /* Untuk judul elegan */
-    --mn-font-body: var(--font-body);
-    /* Untuk teks */
+    /* ── backgrounds */
+    --mn-bg:          #FEFEFE;      /* pure white */
+    --mn-bg-alt:      #F7F6F2;      /* warm ivory tint */
+    --mn-bg-card:     #FFFFFF;
+    --mn-bg-dark:     #1E2B27;      /* deep forest-slate (NOT pure black) */
+
+    /* ── text */
+    --mn-text:        #252F2A;      /* deep slate-green — NOT harsh black */
+    --mn-text-muted:  #5E706A;      /* medium sage-grey */
+    --mn-text-light:  #F2F5F3;      /* off-white for dark sections */
+    --mn-text-dim:    #9BADA6;      /* muted sage */
+
+    /* ── sage accent (primary) */
+    --mn-sage:        #6A947F;      /* main sage green */
+    --mn-sage-light:  #92B5A4;      /* lighter sage */
+    --mn-sage-pale:   #C8DDD5;      /* very pale sage for borders */
+    --mn-sage-soft:   rgba(106, 148, 127, 0.12);
+    --mn-sage-grad:   linear-gradient(135deg, #92B5A4 0%, #6A947F 50%, #4D7A65 100%);
+
+    /* ── warm clay secondary (only for subtle warmth) */
+    --mn-clay:        #C4A882;      /* warm sand — sparingly used */
+    --mn-clay-soft:   rgba(196, 168, 130, 0.15);
+
+    /* ── borders */
+    --mn-border:      #E8EAE6;      /* cool ivory border */
+    --mn-border-sage: rgba(106, 148, 127, 0.30);
+
+    /* ── shadows */
+    --mn-shadow-sm:   0 2px 12px rgba(37, 47, 42, 0.06);
+    --mn-shadow:      0 8px 40px rgba(37, 47, 42, 0.10);
+    --mn-shadow-sage: 0 8px 32px rgba(106, 148, 127, 0.22);
+
+    /* ── typography */
+    --mn-font-serif:  var(--font-serif);
+    --mn-font-body:   var(--font-body);
     --mn-font-script: var(--font-script);
-    /* Untuk nama mempelai */
-    --mn-tracking: 0.1em;
-    /* Letterspace lebar — kesan mewah */
-
-    /* Efek */
-    --mn-shadow: 0 2px 16px rgba(0, 0, 0, 0.06);
-    --mn-shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.10);
 
     background: var(--mn-bg);
-    color: var(--mn-primary);
+    color: var(--mn-text);
     font-family: var(--mn-font-body);
 }
 
-/* ── Heading ────────────────────────────────────────────────────────── */
+/* ── Headings ───────────────────────────────────────────────────────── */
 [data-template="minimalist"] h1,
 [data-template="minimalist"] h2,
-[data-template="minimalist"] h3 {
+[data-template="minimalist"] h3,
+[data-template="minimalist"] h4 {
     font-family: var(--mn-font-serif);
     font-weight: 300;
-    letter-spacing: var(--mn-tracking);
-    color: var(--mn-primary);
+    letter-spacing: 0.03em;
+    color: var(--mn-text);
+    line-height: 1.2;
 }
 
-/* ── Nama mempelai ──────────────────────────────────────────────────── */
+/* ── Script names ───────────────────────────────────────────────────── */
 [data-template="minimalist"] .mn-names {
     font-family: var(--mn-font-script);
-    color: var(--mn-primary);
-    line-height: 1.15;
+    color: var(--mn-text);
+    line-height: 1.1;
 }
 
-/* ── Label uppercase ────────────────────────────────────────────────── */
+/* ── Label / caps ───────────────────────────────────────────────────── */
 [data-template="minimalist"] .mn-label {
     font-family: var(--mn-font-body);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.25em;
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
     text-transform: uppercase;
-    color: var(--mn-muted);
+    color: var(--mn-sage);
 }
 
-/* ── Garis tipis horizontal ─────────────────────────────────────────── */
+/* ── Sage hairline divider ──────────────────────────────────────────── */
 [data-template="minimalist"] .mn-hr {
     width: 3rem;
     height: 1px;
-    background: var(--mn-gold);
+    background: var(--mn-sage);
     margin: 1.5rem auto;
+    opacity: 0.5;
 }
 
 [data-template="minimalist"] .mn-hr-full {
     width: 100%;
     height: 1px;
     background: var(--mn-border);
-    margin: 2rem 0;
 }
 
-/* ── Section dark ───────────────────────────────────────────────────── */
-[data-template="minimalist"] .mn-section-dark {
-    background: var(--mn-bg-dark);
-    color: var(--mn-white);
+/* ── Section heading block ──────────────────────────────────────────── */
+[data-template="minimalist"] .mn-section-head {
+    text-align: center;
+    margin-bottom: 4rem;
 }
 
-/* ── Tombol minimalist ──────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-section-head h2 {
+    font-size: clamp(2rem, 5vw, 3rem);
+    color: var(--mn-text);
+    margin-bottom: 1rem;
+}
+
+/* ── Decorative line cluster ────────────────────────────────────────── */
+[data-template="minimalist"] .mn-line-group {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+[data-template="minimalist"] .mn-line-group .line {
+    height: 1px;
+    width: 3rem;
+    background: var(--mn-sage);
+    opacity: 0.35;
+}
+
+[data-template="minimalist"] .mn-line-group .dot {
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--mn-sage);
+    opacity: 0.55;
+}
+
+/* ── Buttons ────────────────────────────────────────────────────────── */
 [data-template="minimalist"] .mn-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.5rem;
-    padding: 0.875rem 2.5rem;
-    border: 1px solid var(--mn-primary);
+    gap: 0.6rem;
+    padding: 1rem 2.5rem;
+    border: 1px solid var(--mn-text);
     background: transparent;
-    color: var(--mn-primary);
+    color: var(--mn-text);
     font-family: var(--mn-font-body);
-    font-size: 0.75rem;
-    font-weight: 600;
-    letter-spacing: 0.2em;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.22em;
     text-transform: uppercase;
-    transition: all 0.25s ease;
+    transition: background 0.25s ease, color 0.25s ease;
     cursor: pointer;
+    border-radius: 999px;
 }
 
 [data-template="minimalist"] .mn-btn:hover {
-    background: var(--mn-primary);
-    color: var(--mn-white);
+    background: var(--mn-text);
+    color: var(--mn-bg);
 }
 
-[data-template="minimalist"] .mn-btn-gold {
-    border-color: var(--mn-gold);
-    color: var(--mn-gold);
+[data-template="minimalist"] .mn-btn-sage {
+    border-color: var(--mn-sage);
+    color: var(--mn-sage);
 }
 
-[data-template="minimalist"] .mn-btn-gold:hover {
-    background: var(--mn-gold);
-    color: var(--mn-white);
+[data-template="minimalist"] .mn-btn-sage:hover {
+    background: var(--mn-sage);
+    color: #fff;
 }
 
-/* ── Foto couple hero (landscape) ───────────────────────────────────── */
-[data-template="minimalist"] .mn-hero-photo {
-    aspect-ratio: 16/9;
-    object-fit: cover;
-    width: 100%;
+[data-template="minimalist"] .mn-btn-dark {
+    background: var(--mn-bg-dark);
+    color: var(--mn-text-light);
+    border-color: var(--mn-bg-dark);
 }
 
-/* ── Portrait mempelai ──────────────────────────────────────────────── */
-[data-template="minimalist"] .mn-portrait {
-    aspect-ratio: 3/4;
-    object-fit: cover;
-    box-shadow: var(--mn-shadow-lg);
+[data-template="minimalist"] .mn-btn-dark:hover {
+    background: #2E3D38;
+    border-color: #2E3D38;
 }
 
-/* ── Scrollbar minimalist ────────────────────────────────────────────── */
-[data-template="minimalist"] ::-webkit-scrollbar {
-    width: 3px;
+/* ── Event cards ─────────────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-event-card {
+    background: var(--mn-bg-card);
+    border: 1px solid var(--mn-border);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: var(--mn-shadow-sm);
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-[data-template="minimalist"] ::-webkit-scrollbar-track {
+[data-template="minimalist"] .mn-event-card:hover {
+    box-shadow: var(--mn-shadow);
+    transform: translateY(-3px);
+}
+
+/* ── Gallery item ───────────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-gallery-item {
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--mn-bg-alt);
+}
+
+/* ── Timeline connector ─────────────────────────────────────────────── */
+[data-template="minimalist"] .mn-timeline-line {
+    background: linear-gradient(to bottom, transparent, var(--mn-sage) 15%, var(--mn-sage) 85%, transparent);
+    width: 1px;
+    opacity: 0.5;
+}
+
+/* ── RSVP inputs ─────────────────────────────────────────────────────── */
+[data-template="minimalist"] input,
+[data-template="minimalist"] textarea,
+[data-template="minimalist"] select {
     background: var(--mn-bg);
+    border: 1px solid var(--mn-border);
+    border-radius: 0.75rem;
+    padding: 0.9rem 1rem;
+    font-family: var(--mn-font-body);
+    font-size: 0.875rem;
+    color: var(--mn-text);
+    width: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    outline: none;
 }
 
+[data-template="minimalist"] input:focus,
+[data-template="minimalist"] textarea:focus,
+[data-template="minimalist"] select:focus {
+    border-color: var(--mn-sage);
+    box-shadow: 0 0 0 3px rgba(106, 148, 127, 0.15);
+}
+
+[data-template="minimalist"] input::placeholder,
+[data-template="minimalist"] textarea::placeholder {
+    color: var(--mn-text-dim);
+}
+
+/* ── Dark section (deep forest-slate) ──────────────────────────────── */
+[data-template="minimalist"] .mn-dark {
+    background: var(--mn-bg-dark);
+    color: var(--mn-text-light);
+}
+
+[data-template="minimalist"] .mn-dark h1,
+[data-template="minimalist"] .mn-dark h2,
+[data-template="minimalist"] .mn-dark h3,
+[data-template="minimalist"] .mn-dark h4 {
+    color: var(--mn-text-light);
+}
+
+/* inputs inside dark sections */
+[data-template="minimalist"] .mn-dark input,
+[data-template="minimalist"] .mn-dark textarea,
+[data-template="minimalist"] .mn-dark select {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.12);
+    color: var(--mn-text-light);
+}
+
+[data-template="minimalist"] .mn-dark input::placeholder,
+[data-template="minimalist"] .mn-dark textarea::placeholder {
+    color: rgba(242, 245, 243, 0.35);
+}
+
+[data-template="minimalist"] .mn-dark input:focus,
+[data-template="minimalist"] .mn-dark textarea:focus,
+[data-template="minimalist"] .mn-dark select:focus {
+    border-color: var(--mn-sage-light);
+    box-shadow: 0 0 0 3px rgba(106, 148, 127, 0.2);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────── */
+[data-template="minimalist"] ::-webkit-scrollbar { width: 3px; }
+[data-template="minimalist"] ::-webkit-scrollbar-track { background: var(--mn-bg); }
 [data-template="minimalist"] ::-webkit-scrollbar-thumb {
-    background: var(--mn-primary);
-    border-radius: 9999px;
+    background: var(--mn-sage-pale);
+    border-radius: 999px;
 }
 
-/* ── Seleksi ────────────────────────────────────────────────────────── */
+/* ── Selection ──────────────────────────────────────────────────────── */
 [data-template="minimalist"] ::selection {
-    background: var(--mn-gold-soft);
-    color: var(--mn-primary);
+    background: var(--mn-sage-soft);
+    color: var(--mn-text);
+}
+
+/* ── Animations ─────────────────────────────────────────────────────── */
+@keyframes mn-fadeup {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+[data-template="minimalist"] .mn-fadeup {
+    animation: mn-fadeup 0.9s ease both;
+}
+
+/* ── Sage glow pulse (timeline nodes) ──────────────────────────────── */
+@keyframes mn-sage-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(106, 148, 127, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(106, 148, 127, 0); }
+}
+
+[data-template="minimalist"] .mn-sage-pulse {
+    animation: mn-sage-pulse 2.5s ease-in-out infinite;
 }

@@ -6,6 +6,8 @@ import {
     deleteLocalFiles,
     findReplacedSlotUrls,
     findRemovedGalleryUrls,
+    moveTempToFinal,
+    isTempUpload,
 } from '@/lib/storage';
 
 // GET /api/weddings/[id]
@@ -40,11 +42,11 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     // ── Collect files to delete BEFORE DB update ──────────────────────────
     const filesToDelete: string[] = [];
 
-    // 1. Photo slots: delete local files for any replaced slot
+    // 1. Photo slots: delete local files for replaced OR removed slots
     if (body.photos !== undefined) {
         const oldPhotos = (existing as Record<string, unknown>).photos as Record<string, string> ?? {};
-        const mergedNew: Record<string, string> = { ...oldPhotos, ...body.photos };
-        filesToDelete.push(...findReplacedSlotUrls(oldPhotos, mergedNew));
+        // Pass body.photos directly (not merged) so deleted keys are detected as removals
+        filesToDelete.push(...findReplacedSlotUrls(oldPhotos, body.photos));
     }
 
     // 2. Gallery: delete local files removed from the list
@@ -60,6 +62,64 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
         filesToDelete.push(existing.groomImage);
     }
     // ─────────────────────────────────────────────────────────────────────
+
+    // ── Move Temp files to Final destination ──────────────────────────────
+    // Replace URL paths in body if they start with /uploads/temp/...
+    if (body.photos !== undefined) {
+        for (const [key, url] of Object.entries(body.photos)) {
+            if (typeof url === 'string' && isTempUpload(url)) {
+                body.photos[key] = await moveTempToFinal(url, userId);
+            }
+        }
+    }
+    if (body.gallery !== undefined && Array.isArray(body.gallery)) {
+        for (let i = 0; i < body.gallery.length; i++) {
+            const url = body.gallery[i];
+            if (typeof url === 'string' && isTempUpload(url)) {
+                body.gallery[i] = await moveTempToFinal(url, userId);
+            }
+        }
+    }
+    if (body.brideImage && isTempUpload(body.brideImage)) {
+        body.brideImage = await moveTempToFinal(body.brideImage, userId);
+    }
+    if (body.groomImage && isTempUpload(body.groomImage)) {
+        body.groomImage = await moveTempToFinal(body.groomImage, userId);
+    }
+    if (body.qris && isTempUpload(body.qris)) {
+        body.qris = await moveTempToFinal(body.qris, userId);
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
+    // ── Timeline upsert (replace-all strategy) ───────────────────────────
+    if (body.timeline !== undefined && Array.isArray(body.timeline)) {
+        await prisma.timelineItem.deleteMany({ where: { weddingId: id } });
+        if (body.timeline.length > 0) {
+            await prisma.timelineItem.createMany({
+                data: body.timeline.map((item: { year: string; title: string; description: string }) => ({
+                    year: item.year,
+                    title: item.title,
+                    description: item.description,
+                    weddingId: id,
+                })),
+            });
+        }
+    }
+
+    // ── BankAccounts upsert (replace-all strategy) ────────────────────────
+    if (body.bankAccounts !== undefined && Array.isArray(body.bankAccounts)) {
+        await prisma.bankAccount.deleteMany({ where: { weddingId: id } });
+        if (body.bankAccounts.length > 0) {
+            await prisma.bankAccount.createMany({
+                data: body.bankAccounts.map((acc: { bank: string; number: string; holder: string }) => ({
+                    bank: acc.bank,
+                    number: acc.number,
+                    holder: acc.holder,
+                    weddingId: id,
+                })),
+            });
+        }
+    }
 
     const updated = await prisma.wedding.update({
         where: { id },
@@ -83,24 +143,21 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
             ...(body.resepsiMapUrl !== undefined && { resepsiMapUrl: body.resepsiMapUrl }),
             ...(body.gallery !== undefined && { gallery: body.gallery }),
             ...(body.qris !== undefined && { qris: body.qris }),
+            ...(body.slug !== undefined && { slug: body.slug }),
             ...(body.themeId !== undefined && { themeId: body.themeId }),
             ...(body.isPublished !== undefined && { isPublished: body.isPublished }),
             // photos: merge so partial saves don't erase other slots
-            ...(body.photos !== undefined && {
-                photos: {
-                    ...((existing as Record<string, unknown>).photos as Record<string, string> ?? {}),
-                    ...body.photos,
-                },
-            }),
+            // photos: replace-all (gallery page always sends full state)
+            // Merge strategy caused deleted slots to reappear from DB.
+            ...(body.photos !== undefined && { photos: body.photos }),
         },
+        include: { timeline: true, bankAccounts: true },
     });
 
     // ── Delete orphaned files AFTER successful DB update ──────────────────
-    // Fire-and-forget: don't fail the request if file deletion fails
     if (filesToDelete.length > 0) {
         deleteLocalFiles(filesToDelete).catch(() => { });
     }
-    // ─────────────────────────────────────────────────────────────────────
 
     return NextResponse.json({ wedding: updated });
 }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { generateOtp, sendOtpEmail } from '@/lib/email';
+import { generateOtp, sendOtpEmail, sendWelcomeEmail } from '@/lib/email';
 
 // POST /api/auth/verify-otp   — verify OTP and activate account
 export async function POST(req: NextRequest) {
@@ -33,10 +33,13 @@ export async function POST(req: NextRequest) {
         });
 
         // Activate user account
-        await prisma.user.update({
+        const user = await prisma.user.update({
             where: { email: emailLower },
             data: { emailVerified: new Date() },
         });
+
+        // Send Welcome Greeting
+        await sendWelcomeEmail(emailLower, user.name || 'User');
 
         return NextResponse.json({ success: true, message: 'Email berhasil diverifikasi!' });
     } catch (err) {

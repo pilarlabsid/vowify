@@ -24,26 +24,31 @@ export const FormGrid = ({ children }: any) => (
 );
 
 export const FormField = ({ label, value, onChange, placeholder, type = 'text', required }: any) => (
-    <div>
+    <div className="space-y-1.5">
         <label
-            className="block text-xs font-semibold uppercase tracking-wider mb-1.5"
+            className="block text-xs font-semibold uppercase tracking-wider pl-1"
             style={{ color: 'var(--ui-text-secondary)' }}
         >
             {label}
         </label>
-        <input
-            type={type}
-            value={value ?? ''}
-            onChange={onChange}
-            placeholder={placeholder}
-            required={required}
-            className="w-full rounded-2xl px-4 py-3 text-sm focus:outline-none transition-all border"
-            style={{
-                background: 'var(--ui-input-bg)',
-                borderColor: 'var(--ui-input-border)',
-                color: 'var(--ui-text-primary)',
-            }}
-        />
+        <motion.div
+            whileFocus={{ scale: 1.005 }}
+            className="relative"
+        >
+            <input
+                type={type}
+                value={value ?? ''}
+                onChange={onChange}
+                placeholder={placeholder}
+                required={required}
+                className="w-full rounded-2xl px-4 py-3.5 text-sm focus:outline-none transition-all border outline-none focus:ring-2 focus:ring-gold/30"
+                style={{
+                    background: 'var(--ui-input-bg)',
+                    borderColor: 'var(--ui-input-border)',
+                    color: 'var(--ui-text-primary)',
+                }}
+            />
+        </motion.div>
     </div>
 );
 
@@ -55,19 +60,28 @@ export const StatCard = ({ label, value, sub, icon, color }: any) => {
         red: { background: 'color-mix(in srgb, #EF4444 12%, transparent)', color: '#DC2626' },
     };
     return (
-        <div
-            className="rounded-3xl p-6 border transition-all hover:shadow-md"
+        <motion.div
+            whileHover={{ y: -5, boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)" }}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-3xl p-6 border transition-all"
             style={{
                 background: 'var(--ui-bg-card)',
                 borderColor: 'var(--ui-border)',
                 boxShadow: 'var(--ui-shadow)',
             }}
         >
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center mb-4" style={colorStyles[color] || {}}>{icon}</div>
+            <motion.div 
+                whileHover={{ rotate: 15, scale: 1.1 }}
+                className="w-10 h-10 rounded-xl flex items-center justify-center mb-4 transition-transform" 
+                style={colorStyles[color] || {}}
+            >
+                {icon}
+            </motion.div>
             <p className="text-3xl font-bold tabular-nums" style={{ color: 'var(--ui-text-primary)' }}>{value}</p>
             <p className="text-xs uppercase tracking-widest font-semibold mt-1" style={{ color: 'var(--ui-text-muted)' }}>{label}</p>
             <p className="text-xs mt-0.5" style={{ color: 'var(--ui-text-muted)' }}>{sub}</p>
-        </div>
+        </motion.div>
     );
 };
 
@@ -111,8 +125,12 @@ export function WeddingCard({ wedding, selected, onSelect, onRefresh }: any) {
 
     return (
         <motion.div
+            layout
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
             onClick={onSelect}
-            whileHover={{ y: -2 }}
+            whileHover={{ y: -4, boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)" }}
+            whileTap={{ scale: 0.98 }}
             className="rounded-3xl p-6 border cursor-pointer transition-all"
             style={{
                 background: 'var(--ui-bg-card)',
@@ -121,15 +139,17 @@ export function WeddingCard({ wedding, selected, onSelect, onRefresh }: any) {
             }}
         >
             <div className="flex justify-between items-start mb-4">
-                <div>
+                <div className="space-y-1">
                     <h3 className="font-bold text-lg" style={{ color: 'var(--ui-text-primary)' }}>
                         {wedding.groomShort} & {wedding.brideShort}
                     </h3>
-                    <p className="text-sm font-mono" style={{ color: 'var(--ui-text-secondary)' }}>/{wedding.slug}</p>
+                    <p className="text-xs font-mono opacity-60" style={{ color: 'var(--ui-text-secondary)' }}>/{wedding.slug}</p>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span
-                        className="px-2 py-1 rounded-full text-[10px] font-bold"
+                    <motion.span
+                        initial={false}
+                        animate={{ scale: wedding.isPublished ? 1 : 0.95 }}
+                        className="px-2.5 py-1 rounded-full text-[10px] font-bold"
                         style={wedding.isPublished ? {
                             background: 'color-mix(in srgb, #10B981 12%, transparent)',
                             color: '#059669',
@@ -140,41 +160,47 @@ export function WeddingCard({ wedding, selected, onSelect, onRefresh }: any) {
                         }}
                     >
                         {wedding.isPublished ? 'Published' : 'Draft'}
-                    </span>
+                    </motion.span>
                     {onRefresh && (
-                        <button onClick={handleDelete} disabled={deleting} style={{ color: 'var(--ui-text-muted)' }} className="hover:text-red-400 transition-colors p-1">
+                        <button onClick={handleDelete} disabled={deleting} style={{ color: 'var(--ui-text-muted)' }} className="hover:text-red-400 transition-colors p-1.5 rounded-lg hover:bg-red-50">
                             {deleting ? <Loader2 className="w-4 h-4 animate-spin" /> : <Trash2 className="w-4 h-4" />}
                         </button>
                     )}
                 </div>
             </div>
 
-            <div className="space-y-2 text-sm" style={{ color: 'var(--ui-text-secondary)' }}>
-                <div className="flex items-center gap-2">
-                    <Calendar className="w-4 h-4 text-gold/60" />
-                    <span>{dateStr}</span>
+            <div className="space-y-3 text-sm" style={{ color: 'var(--ui-text-secondary)' }}>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gold/5 flex items-center justify-center">
+                        <Calendar className="w-4 h-4 text-gold" />
+                    </div>
+                    <span className="font-medium">{dateStr}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <MapPin className="w-4 h-4 text-gold/60" />
-                    <span className="truncate">{wedding.akadLocation}</span>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gold/5 flex items-center justify-center">
+                        <MapPin className="w-4 h-4 text-gold" />
+                    </div>
+                    <span className="truncate opacity-80">{wedding.akadLocation}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                    <Users className="w-4 h-4 text-gold/60" />
-                    <span>{wedding.greetings?.length ?? 0} RSVP</span>
+                <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gold/5 flex items-center justify-center">
+                        <Users className="w-4 h-4 text-gold" />
+                    </div>
+                    <span className="font-semibold">{wedding.greetings?.length ?? 0} RSVP</span>
                 </div>
             </div>
 
             <div
-                className="mt-4 pt-4 border-t flex gap-2"
+                className="mt-6 pt-5 border-t flex gap-3"
                 style={{ borderColor: 'var(--ui-divider)' }}
             >
                 <Link
                     href={`/${wedding.slug}`}
                     target="_blank"
                     onClick={(e) => e.stopPropagation()}
-                    className="flex items-center gap-1.5 text-xs text-gold border border-gold/30 px-3 py-1.5 rounded-full hover:bg-gold hover:text-primary transition-all font-semibold"
+                    className="flex items-center gap-2 text-xs text-gold border border-gold/30 px-4 py-2 rounded-full hover:bg-gold hover:text-primary transition-all font-bold shadow-sm"
                 >
-                    <Eye className="w-3 h-3" /> Preview
+                    <Eye className="w-3.5 h-3.5" /> Preview Undangan
                 </Link>
             </div>
         </motion.div>
@@ -183,9 +209,9 @@ export function WeddingCard({ wedding, selected, onSelect, onRefresh }: any) {
 
 export function TemplateSelector({ value, onChange }: { value: string; onChange: (v: string) => void }) {
     const templates = [
-        { id: 'javanese', name: 'Javanese', previewImage: '/images/templates/javanese.png', isPremium: false },
-        { id: 'minimalist', name: 'Minimalist', previewImage: '/images/templates/minimalist.png', isPremium: false },
-        { id: 'elegant', name: 'Elegant', previewImage: '/images/templates/elegant.png', isPremium: true },
+        { id: 'javanese', name: 'Javanese', previewImage: '/images/templates/javanese.webp', isPremium: false },
+        { id: 'minimalist', name: 'Minimalist', previewImage: '/images/templates/minimalist.webp', isPremium: false },
+        { id: 'elegant', name: 'Elegant', previewImage: '/images/templates/elegant.webp', isPremium: true },
     ];
 
     return (
